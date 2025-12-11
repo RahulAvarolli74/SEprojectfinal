@@ -6,7 +6,7 @@ const StudentLayout = () => {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen relative font-sans bg-gray-50 flex flex-col">
+    <div className="min-h-screen relative font-sans bg-gray-50 flex flex-col text-slate-900">
       {/* Background & Overlay */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <img

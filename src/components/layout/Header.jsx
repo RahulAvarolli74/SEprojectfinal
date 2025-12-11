@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { Button } from '../common'
 
 function Header() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -48,12 +50,17 @@ function Header() {
                         {['Home'].map((item) => (
                             <a
                                 key={item}
-                                href={item === 'Login' ? '/login' : `#${item.toLowerCase()}`}
+                                href={`#${item.toLowerCase()}`}
                                 className={`font-medium transition-colors duration-200 hover:text-[#800000] ${isScrolled ? 'text-slate-700' : 'text-slate-800'}`}
                             >
                                 {item}
                             </a>
                         ))}
+                        <Link to="/login">
+                            <Button className="bg-[#ff9999] hover:bg-[#ff8080] text-white border-0 shadow-md">
+                                Login to Portal
+                            </Button>
+                        </Link>
                     </nav>
 
                     <button
@@ -72,15 +79,20 @@ function Header() {
 
                 {isMobileMenuOpen && (
                     <nav className="lg:hidden mt-4 pb-4 space-y-3 bg-white rounded-xl px-4 py-3 shadow-xl border border-gray-100">
-                        {['Home', 'About', 'Login'].map((item) => (
+                        {['Home', 'About'].map((item) => (
                             <a
                                 key={item}
-                                href={item === 'Login' ? '/login' : `#${item.toLowerCase()}`}
+                                href={`#${item.toLowerCase()}`}
                                 className="block text-slate-700 hover:text-[#800000] font-medium transition-colors duration-200 py-2 hover:bg-gray-50 px-2 rounded"
                             >
                                 {item}
                             </a>
                         ))}
+                        <Link to="/login" className="block w-full">
+                            <Button className="w-full bg-[#ff9999] hover:bg-[#ff8080] text-white border-0 shadow-md">
+                                Login to Portal
+                            </Button>
+                        </Link>
                     </nav>
                 )}
             </div>

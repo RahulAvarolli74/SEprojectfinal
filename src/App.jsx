@@ -8,6 +8,7 @@ import { Toast } from './components/common';
 import LandingPage from './pages/LandingPage';
 import StudentLogin from './pages/auth/StudentLogin';
 import AdminLogin from './pages/auth/AdminLogin';
+import LoginPage from './pages/auth/LoginPage';
 
 // Student Pages
 import {
@@ -36,6 +37,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login/student" element={<StudentLogin />} />
           <Route path="/login/admin" element={<AdminLogin />} />
+          <Route path="/login" element={<LoginPage />} />
 
           {/* Student Routes */}
           <Route

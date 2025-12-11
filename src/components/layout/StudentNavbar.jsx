@@ -84,7 +84,7 @@ const StudentNavbar = ({ user }) => {
                     ))}
                     <button onClick={handleLogout} className="text-[#800000] font-serif text-lg flex items-center gap-2 py-2 mt-2">
                         <LogOut className="w-5 h-5" />
-                        Sign Out
+                        Logout
                     </button>
                 </div>
             </div>

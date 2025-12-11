@@ -59,20 +59,7 @@ const LandingPage = () => {
             verification and worker management system designed for KLE Tech.
           </p>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/login/student">
-              <Button size="large" icon={Home} className="bg-[#800000] hover:bg-[#600000] text-white border-0 shadow-lg shadow-red-900/20">
-                Student Portal
-                <ArrowRight className="w-4 h-4 ml-1" />
-              </Button>
-            </Link>
-            <Link to="/login/admin">
-              <Button variant="secondary" size="large" icon={Shield} className="bg-white text-slate-900 border border-gray-200 hover:bg-gray-50 hover:border-[#800000]/30 shadow-sm">
-                Admin Portal
-              </Button>
-            </Link>
-          </div>
+
         </div>
 
         {/* Features */}

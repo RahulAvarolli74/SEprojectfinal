@@ -1,20 +1,20 @@
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { toast } from 'react-toastify';
-import { 
+import {
   AlertTriangle,
-  Calendar, 
+  Calendar,
   Home,
-  Filter, 
-  Image as ImageIcon, 
+  Filter,
+  Image as ImageIcon,
   Search,
   MessageCircle,
   Eye
 } from 'lucide-react';
-import { 
-  Card, 
-  Button, 
-  Select, 
+import {
+  Card,
+  Button,
+  Select,
   Input,
   Textarea,
   LoadingSpinner,
@@ -151,7 +151,7 @@ const IssueManagement = () => {
 
   const handleUpdateIssue = async () => {
     if (!selectedIssue) return;
-    
+
     setSubmitting(true);
     try {
       // Update issue locally
@@ -199,10 +199,10 @@ const IssueManagement = () => {
       {/* Header */}
       <div className="pt-8 lg:pt-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">
             Issue Management
           </h1>
-          <p className="text-slate-400">
+          <p className="text-slate-500">
             Review and manage student-reported issues
           </p>
         </div>
@@ -218,7 +218,7 @@ const IssueManagement = () => {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {stats.map((stat) => (
-          <Card key={stat.label} className="p-4 text-center">
+          <Card key={stat.label} className="p-4 text-center bg-white border-slate-200 shadow-sm">
             <p className={`text-2xl font-bold ${stat.color}`}>{stat.count}</p>
             <p className="text-xs text-slate-500">{stat.label}</p>
           </Card>
@@ -227,12 +227,12 @@ const IssueManagement = () => {
 
       {/* Filters */}
       {showFilters && (
-        <Card className="p-6">
+        <Card className="p-6 bg-white border-slate-200 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-white">Filters</h3>
+            <h3 className="text-lg font-semibold text-slate-900">Filters</h3>
             <button
               onClick={clearFilters}
-              className="text-sm text-violet-400 hover:text-violet-300"
+              className="text-sm text-violet-600 hover:text-violet-700"
             >
               Clear all
             </button>
@@ -243,24 +243,28 @@ const IssueManagement = () => {
               options={statusOptions}
               value={filters.status}
               onChange={(e) => handleFilterChange('status', e.target.value)}
+              className="bg-white border-slate-200 text-slate-900"
             />
             <Input
               placeholder="Room Number"
               icon={Home}
               value={filters.room}
               onChange={(e) => handleFilterChange('room', e.target.value)}
+              className="bg-white border-slate-200 text-slate-900"
             />
             <Input
               type="date"
               placeholder="Start Date"
               value={filters.startDate}
               onChange={(e) => handleFilterChange('startDate', e.target.value)}
+              className="bg-white border-slate-200 text-slate-900"
             />
             <Input
               type="date"
               placeholder="End Date"
               value={filters.endDate}
               onChange={(e) => handleFilterChange('endDate', e.target.value)}
+              className="bg-white border-slate-200 text-slate-900"
             />
           </div>
         </Card>
@@ -270,11 +274,11 @@ const IssueManagement = () => {
       {filteredIssues.length > 0 ? (
         <div className="space-y-4">
           {filteredIssues.map((issue) => (
-            <Card key={issue._id} className="p-6" hover>
+            <Card key={issue._id} className="p-6 bg-white border-slate-200 shadow-sm hover:shadow-md transition-shadow" hover>
               <div className="flex flex-col lg:flex-row lg:items-start gap-4">
                 {/* Issue Image */}
                 {issue.image && (
-                  <div className="w-full lg:w-32 h-24 rounded-xl overflow-hidden flex-shrink-0">
+                  <div className="w-full lg:w-32 h-24 rounded-xl overflow-hidden flex-shrink-0 border border-slate-100">
                     <img
                       src={issue.image}
                       alt="Issue"
@@ -286,31 +290,31 @@ const IssueManagement = () => {
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2 mb-2">
-                    <span className="px-2.5 py-1 bg-violet-500/20 text-violet-300 text-sm font-medium rounded-lg">
+                    <span className="px-2.5 py-1 bg-violet-50 text-violet-700 text-sm font-medium rounded-lg border border-violet-100">
                       Room {issue.room.number}
                     </span>
-                    <span className="px-2.5 py-1 bg-slate-700/50 text-slate-300 text-sm rounded-lg">
+                    <span className="px-2.5 py-1 bg-slate-100 text-slate-600 text-sm rounded-lg border border-slate-200">
                       {issueTypeLabels[issue.issueType] || issue.issueType}
                     </span>
                     <StatusBadge status={issue.status} />
                   </div>
 
-                  <p className="text-slate-300 mb-2 line-clamp-2">
+                  <p className="text-slate-700 mb-2 line-clamp-2">
                     {issue.description}
                   </p>
 
-                  <div className="flex items-center gap-2 text-sm text-slate-500">
+                  <div className="flex items-center gap-2 text-sm text-slate-400">
                     <Calendar className="w-4 h-4" />
                     {format(new Date(issue.createdAt), 'MMM d, yyyy • h:mm a')}
                   </div>
 
                   {issue.adminComment && (
-                    <div className="mt-3 p-3 bg-slate-800/50 rounded-lg">
-                      <div className="flex items-center gap-2 text-sm text-emerald-400 mb-1">
+                    <div className="mt-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                      <div className="flex items-center gap-2 text-sm text-emerald-600 mb-1">
                         <MessageCircle className="w-4 h-4" />
                         Admin Comment
                       </div>
-                      <p className="text-sm text-slate-300 line-clamp-2">
+                      <p className="text-sm text-slate-600 line-clamp-2">
                         {issue.adminComment}
                       </p>
                     </div>
@@ -333,11 +337,11 @@ const IssueManagement = () => {
           ))}
         </div>
       ) : (
-        <Card className="p-12 text-center">
-          <div className="p-4 bg-slate-800/50 rounded-full w-fit mx-auto mb-4">
-            <AlertTriangle className="w-8 h-8 text-slate-500" />
+        <Card className="p-12 text-center bg-white border-slate-200 shadow-sm">
+          <div className="p-4 bg-slate-50 rounded-full w-fit mx-auto mb-4">
+            <AlertTriangle className="w-8 h-8 text-slate-400" />
           </div>
-          <h3 className="text-lg font-semibold text-white mb-2">
+          <h3 className="text-lg font-semibold text-slate-900 mb-2">
             No Issues Found
           </h3>
           <p className="text-slate-400">
@@ -359,20 +363,20 @@ const IssueManagement = () => {
           <div className="space-y-6">
             {/* Issue Info */}
             <div className="flex flex-wrap gap-2">
-              <span className="px-2.5 py-1 bg-violet-500/20 text-violet-300 text-sm font-medium rounded-lg">
+              <span className="px-2.5 py-1 bg-violet-50 text-violet-700 text-sm font-medium rounded-lg border border-violet-100">
                 Room {selectedIssue.room.number}
               </span>
-              <span className="px-2.5 py-1 bg-slate-700/50 text-slate-300 text-sm rounded-lg">
+              <span className="px-2.5 py-1 bg-slate-100 text-slate-600 text-sm rounded-lg border border-slate-200">
                 {issueTypeLabels[selectedIssue.issueType] || selectedIssue.issueType}
               </span>
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 Description
               </label>
-              <p className="text-slate-400 p-4 bg-slate-800/50 rounded-xl">
+              <p className="text-slate-600 p-4 bg-slate-50 rounded-xl border border-slate-100">
                 {selectedIssue.description}
               </p>
             </div>
