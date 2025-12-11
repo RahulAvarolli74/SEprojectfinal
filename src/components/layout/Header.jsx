@@ -50,14 +50,14 @@ function Header() {
                         {['Home'].map((item) => (
                             <a
                                 key={item}
-                                href={`#${item.toLowerCase()}`}
+                                href={item === 'Home' ? '/' : `#${item.toLowerCase()}`}
                                 className={`font-medium transition-colors duration-200 hover:text-[#800000] ${isScrolled ? 'text-slate-700' : 'text-slate-800'}`}
                             >
                                 {item}
                             </a>
                         ))}
                         <Link to="/login">
-                            <Button className="bg-[#ff9999] hover:bg-[#ff8080] text-white border-0 shadow-md">
+                            <Button className="bg-red-600 hover:bg-red-700 text-white border-0 shadow-md !bg-none" style={{ backgroundImage: 'none' }}>
                                 Login to Portal
                             </Button>
                         </Link>
@@ -82,14 +82,14 @@ function Header() {
                         {['Home', 'About'].map((item) => (
                             <a
                                 key={item}
-                                href={`#${item.toLowerCase()}`}
+                                href={item === 'Home' ? '/' : `#${item.toLowerCase()}`}
                                 className="block text-slate-700 hover:text-[#800000] font-medium transition-colors duration-200 py-2 hover:bg-gray-50 px-2 rounded"
                             >
                                 {item}
                             </a>
                         ))}
                         <Link to="/login" className="block w-full">
-                            <Button className="w-full bg-[#ff9999] hover:bg-[#ff8080] text-white border-0 shadow-md">
+                            <Button className="w-full bg-[#ff9999] hover:bg-[#ff8080] text-white border-0 shadow-md !bg-none" style={{ backgroundImage: 'none' }}>
                                 Login to Portal
                             </Button>
                         </Link>

@@ -66,7 +66,7 @@ const RaiseIssue = () => {
   if (submitted) {
     return (
       <div className="max-w-2xl mx-auto pt-8">
-        <Card className="p-8 text-center border-slate-200 shadow-lg">
+        <Card className="p-8 text-center border-slate-200 shadow-lg bg-white">
           <div className="p-4 bg-emerald-100 rounded-full w-fit mx-auto mb-6">
             <CheckCircle2 className="w-12 h-12 text-emerald-600" />
           </div>
@@ -117,7 +117,7 @@ const RaiseIssue = () => {
         </div>
       </Card>
 
-      <Card className="p-6 border-slate-200 shadow-md">
+      <Card className="p-6 border-slate-200 shadow-md bg-white">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Issue Type */}
           <Select

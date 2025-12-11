@@ -154,7 +154,7 @@ const CleaningHistory = () => {
 
       {/* Filters */}
       {showFilters && (
-        <Card className="p-6 border-slate-200">
+        <Card className="p-6 border-slate-200 bg-white">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-slate-900">Filters</h3>
             <button
@@ -201,7 +201,7 @@ const CleaningHistory = () => {
       {filteredHistory.length > 0 ? (
         <div className="space-y-4">
           {filteredHistory.map((item) => (
-            <Card key={item._id} className="p-6 border-slate-200 shadow-sm hover:shadow-md transition-shadow" hover>
+            <Card key={item._id} className="p-6 border-slate-200 shadow-sm hover:shadow-md transition-shadow bg-white" hover>
               <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                 {/* Image thumbnail */}
                 {item.image && (
@@ -255,7 +255,7 @@ const CleaningHistory = () => {
           ))}
         </div>
       ) : (
-        <Card className="p-12 text-center border-slate-200">
+        <Card className="p-12 text-center border-slate-200 bg-white">
           <div className="p-4 bg-slate-100 rounded-full w-fit mx-auto mb-4">
             <Search className="w-8 h-8 text-slate-400" />
           </div>

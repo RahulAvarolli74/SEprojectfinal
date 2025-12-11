@@ -39,7 +39,7 @@ const LandingPage = () => {
 
       {/* Hero Section */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-32 flex-grow">
-        <div className="text-center max-w-4xl mx-auto animate-in slide-in-from-bottom-4 duration-700 fade-in">
+        <div className="max-w-4xl animate-in slide-in-from-bottom-4 duration-700 fade-in">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#800000]/5 border border-[#800000]/20 rounded-full mb-8 backdrop-blur-sm">
             {/* <Sparkles className="w-4 h-4 text-[#800000]" /> */}
@@ -54,7 +54,7 @@ const LandingPage = () => {
             </span>
           </h1>
 
-          <p className="text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-slate-600 mb-10 max-w-2xl leading-relaxed">
             Streamline your hostel cleaning operations with our comprehensive
             verification and worker management system designed for KLE Tech.
           </p>

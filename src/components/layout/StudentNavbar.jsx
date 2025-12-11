@@ -28,7 +28,7 @@ const StudentNavbar = ({ user }) => {
         >
             <div className="container mx-auto px-6 flex justify-between items-center h-10">
                 <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/student/dashboard')}>
-                    <img src="/logo.png" alt="KLE Logo" className="h-12 w-auto object-contain" />
+                    {/* <img src="/logo.png" alt="KLE Logo" className="h-12 w-auto object-contain" /> */}
                     <div>
                         <span className={`block text-xl font-serif font-bold leading-none tracking-tight ${scrolled ? 'text-slate-900' : 'text-slate-900'}`}
                         >

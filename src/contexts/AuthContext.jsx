@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
     // Mock authentication - bypass API until backend is ready
     const mockUser = {
       id: '1',
-      name: 'Demo Student',
+      name: 'jndjsr',
       roomNumber: roomNumber || '101',
       email: 'student@demo.com',
       role: 'student'

@@ -1,18 +1,18 @@
 import { forwardRef } from 'react';
 import { ChevronDown } from 'lucide-react';
 
-const Select = forwardRef(({ 
-  label, 
-  error, 
-  options = [], 
+const Select = forwardRef(({
+  label,
+  error,
+  options = [],
   placeholder = 'Select an option',
   className = '',
-  ...props 
+  ...props
 }, ref) => {
   return (
     <div className="space-y-1.5">
       {label && (
-        <label className="block text-sm font-medium text-slate-300">
+        <label className="block text-sm font-medium text-slate-700">
           {label}
         </label>
       )}
@@ -22,30 +22,30 @@ const Select = forwardRef(({
           className={`
             w-full px-4 py-3 
             appearance-none
-            bg-slate-800/50 
-            border border-slate-700/50 
+            bg-white
+            border border-slate-200
             rounded-xl 
-            text-white 
+            text-slate-900
             focus:outline-none 
             focus:ring-2 
-            focus:ring-violet-500/50 
-            focus:border-violet-500/50
+            focus:ring-[#800000]/20
+            focus:border-[#800000]
             transition-all 
             duration-300
             cursor-pointer
-            ${error ? 'border-red-500/50 focus:ring-red-500/50' : ''}
+            ${error ? 'border-red-500 focus:ring-red-500/20' : ''}
             ${className}
           `}
           {...props}
         >
-          <option value="" className="bg-slate-900 text-slate-500">
+          <option value="" className="bg-white text-slate-500">
             {placeholder}
           </option>
           {options.map((option) => (
-            <option 
-              key={option.value} 
+            <option
+              key={option.value}
               value={option.value}
-              className="bg-slate-900 text-white"
+              className="bg-white text-slate-900"
             >
               {option.label}
             </option>
@@ -56,7 +56,7 @@ const Select = forwardRef(({
         </div>
       </div>
       {error && (
-        <p className="text-sm text-red-400">{error}</p>
+        <p className="text-sm text-red-500">{error}</p>
       )}
     </div>
   );

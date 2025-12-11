@@ -109,7 +109,7 @@ const MyIssues = () => {
           { label: 'Resolved', count: issues.filter(i => i.status === 'resolved').length, color: 'emerald' },
           { label: 'Closed', count: issues.filter(i => i.status === 'closed').length, color: 'slate' },
         ].map((stat) => (
-          <Card key={stat.label} className="p-4 text-center border-slate-200">
+          <Card key={stat.label} className="p-4 text-center border-slate-200 bg-white">
             <p className={`text-2xl font-bold text-${stat.color}-500`}>{stat.count}</p>
             <p className="text-xs text-slate-500">{stat.label}</p>
           </Card>
@@ -120,7 +120,7 @@ const MyIssues = () => {
       {issues.length > 0 ? (
         <div className="space-y-4">
           {issues.map((issue) => (
-            <Card key={issue._id} className="p-6 border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+            <Card key={issue._id} className="p-6 border-slate-200 shadow-sm hover:shadow-md transition-shadow bg-white">
               <div className="flex flex-col gap-4">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
@@ -176,7 +176,7 @@ const MyIssues = () => {
           ))}
         </div>
       ) : (
-        <Card className="p-12 text-center border-slate-200">
+        <Card className="p-12 text-center border-slate-200 bg-white">
           <div className="p-4 bg-slate-100 rounded-full w-fit mx-auto mb-4">
             <MessageSquare className="w-8 h-8 text-slate-400" />
           </div>

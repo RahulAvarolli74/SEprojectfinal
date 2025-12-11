@@ -51,9 +51,9 @@ const StudentDashboard = () => {
   };
 
   const stats = [
-    { title: 'Cleanings This Month', value: dashboardData.submissionsThisMonth.toString(), icon: ClipboardCheck, color: 'text-emerald-600', bg: 'bg-emerald-100' },
-    { title: 'Pending Issues', value: dashboardData.openIssues.toString(), icon: AlertCircle, color: 'text-amber-600', bg: 'bg-amber-100' },
-    { title: 'Next Scheduled', value: 'Tomorrow', icon: Calendar, color: 'text-blue-600', bg: 'bg-blue-100' },
+    { title: 'Cleanings This Month', value: dashboardData.submissionsThisMonth.toString(), icon: ClipboardCheck, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    { title: 'Pending Issues', value: dashboardData.openIssues.toString(), icon: AlertCircle, color: 'text-amber-600', bg: 'bg-amber-50' },
+    { title: 'Next Scheduled', value: 'Tomorrow', icon: Calendar, color: 'text-blue-600', bg: 'bg-blue-50' },
   ];
 
   if (loading) {
@@ -75,14 +75,14 @@ const StudentDashboard = () => {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         {stats.map((stat, index) => (
-          <Card key={index} className="p-6 border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-4">
-              <div className={`p-3 rounded-xl ${stat.bg}`}>
-                <stat.icon className={`w-6 h-6 ${stat.color}`} />
-              </div>
+          <Card key={index} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex justify-between items-start">
               <div>
                 <p className="text-sm font-medium text-slate-500">{stat.title}</p>
-                <h3 className="text-2xl font-bold text-slate-900">{stat.value}</h3>
+                <h3 className="text-2xl font-bold text-slate-900 mt-1">{stat.value}</h3>
+              </div>
+              <div className={`p-2 rounded-lg ${stat.bg} bg-opacity-50`}>
+                <stat.icon className={`w-5 h-5 ${stat.color}`} />
               </div>
             </div>
           </Card>
@@ -152,7 +152,7 @@ const StudentDashboard = () => {
             <Bell className="w-5 h-5 text-[#800000]" />
             Recent Updates
           </h2>
-          <Card className="p-6 border-slate-100 bg-white/80">
+          <Card className="p-6 bg-white rounded-xl border border-slate-200 shadow-sm">
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="flex items-start gap-3 pb-4 border-b border-slate-100 last:border-0 last:pb-0">
