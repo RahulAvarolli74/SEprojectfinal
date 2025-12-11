@@ -1,7 +1,17 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { LogOut } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 import AdminSidebar from './AdminSidebar';
 
 const AdminLayout = () => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 flex text-slate-900">
       {/* Background effects */}
@@ -15,8 +25,18 @@ const AdminLayout = () => {
 
 
       {/* Main content */}
-      <main className="flex-1 lg:ml-0 relative">
-        <div className="min-h-screen p-6 lg:p-8">
+      <main className="flex-1 lg:ml-0 relative flex flex-col">
+        {/* Top Header */}
+        <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 px-6 py-3 flex justify-end items-center sticky top-0 z-30">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-slate-600 hover:bg-red-50 hover:text-red-600 transition-all duration-200 font-medium text-sm border border-slate-200 hover:border-red-200 bg-white"
+          >
+            <LogOut className="w-4 h-4" />
+            Logout
+          </button>
+        </header>
+        <div className="flex-1 p-6 lg:p-8">
           <Outlet />
         </div>
       </main>

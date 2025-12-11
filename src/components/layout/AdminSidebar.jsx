@@ -82,16 +82,7 @@ const AdminSidebar = () => {
         ))}
       </nav>
 
-      {/* Logout */}
-      <div className="p-4 border-t border-gray-100 bg-slate-50/50">
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-slate-500 hover:bg-red-50 hover:text-red-600 border border-transparent transition-all duration-300 group"
-        >
-          <LogOut className="w-5 h-5 text-slate-400 group-hover:text-red-500 transition-colors" />
-          <span className="font-medium">Logout</span>
-        </button>
-      </div>
+
     </>
   );
 
