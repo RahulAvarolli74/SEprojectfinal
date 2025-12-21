@@ -64,14 +64,12 @@ const IssueManagement = () => {
     try {
       setLoading(true);
       const response = await issueService.getAllIssues(filters);
-      // response is ApiRes. data might be { issues: [] } or just []
-      // Checking issue.controller.js -> getAllIssues
-      // It returns new ApiRes(200, issues, "...")
-      // So response.data IS the array of issues.
+      // Ensure we access the array correctly from the response
       const fetchedIssues = response.data || [];
       setIssues(fetchedIssues);
     } catch (error) {
       console.error('Failed to fetch issues:', error);
+      toast.error('Failed to load issues');
     } finally {
       setLoading(false);
     }
@@ -93,7 +91,7 @@ const IssueManagement = () => {
   const openIssueModal = (issue) => {
     setSelectedIssue(issue);
     setNewStatus(issue.status);
-    setComment(issue.adminComment || '');
+    setComment(issue.adminResponse || ''); // Changed from adminComment to adminResponse to match backend
     setIsModalOpen(true);
   };
 
@@ -115,7 +113,7 @@ const IssueManagement = () => {
       setIssues((prev) =>
         prev.map((issue) =>
           issue._id === selectedIssue._id
-            ? { ...issue, status: newStatus, adminComment: comment }
+            ? { ...issue, status: newStatus, adminResponse: comment } // Changed to adminResponse
             : issue
         )
       );
@@ -131,7 +129,8 @@ const IssueManagement = () => {
 
   const filteredIssues = issues.filter((issue) => {
     if (filters.status && issue.status !== filters.status) return false;
-    if (filters.room && !issue.room.number.toLowerCase().includes(filters.room.toLowerCase())) return false;
+    // FIX: Changed issue.room.number to issue.room_no
+    if (filters.room && !issue.room_no.toLowerCase().includes(filters.room.toLowerCase())) return false;
     if (filters.startDate && new Date(issue.createdAt) < new Date(filters.startDate)) return false;
     if (filters.endDate && new Date(issue.createdAt) > new Date(filters.endDate)) return false;
     return true;
@@ -157,7 +156,7 @@ const IssueManagement = () => {
       {/* Header */}
       <div className="pt-8 lg:pt-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">
+          <h1 className="text-3xl font-bold text-slate-900 mb-2 font-serif">
             Issue Management
           </h1>
           <p className="text-slate-500">
@@ -249,7 +248,8 @@ const IssueManagement = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2 mb-2">
                     <span className="px-2.5 py-1 bg-violet-50 text-violet-700 text-sm font-medium rounded-lg border border-violet-100">
-                      Room {issue.room.number}
+                      {/* FIX: Changed from issue.room.number to issue.room_no */}
+                      Room {issue.room_no}
                     </span>
                     <span className="px-2.5 py-1 bg-slate-100 text-slate-600 text-sm rounded-lg border border-slate-200">
                       {issueTypeLabels[issue.issueType] || issue.issueType}
@@ -266,14 +266,14 @@ const IssueManagement = () => {
                     {format(new Date(issue.createdAt), 'MMM d, yyyy • h:mm a')}
                   </div>
 
-                  {issue.adminComment && (
+                  {issue.adminResponse && (
                     <div className="mt-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
                       <div className="flex items-center gap-2 text-sm text-emerald-600 mb-1">
                         <MessageCircle className="w-4 h-4" />
                         Admin Comment
                       </div>
                       <p className="text-sm text-slate-600 line-clamp-2">
-                        {issue.adminComment}
+                        {issue.adminResponse}
                       </p>
                     </div>
                   )}
@@ -322,7 +322,8 @@ const IssueManagement = () => {
             {/* Issue Info */}
             <div className="flex flex-wrap gap-2">
               <span className="px-2.5 py-1 bg-violet-50 text-violet-700 text-sm font-medium rounded-lg border border-violet-100">
-                Room {selectedIssue.room.number}
+                {/* FIX: Changed from selectedIssue.room.number to selectedIssue.room_no */}
+                Room {selectedIssue.room_no}
               </span>
               <span className="px-2.5 py-1 bg-slate-100 text-slate-600 text-sm rounded-lg border border-slate-200">
                 {issueTypeLabels[selectedIssue.issueType] || selectedIssue.issueType}

@@ -63,6 +63,12 @@ export const workerService = {
     const response = await api.get(`/admin/workers/${id}/stats`);
     return response.data;
   },
+
+  getActiveWorkers: async () => {
+    // CHANGE THIS URL: from '/admin/workers-stats' to '/students/workers'
+    const response = await api.get('/students/workers');
+    return response.data;
+  },
 };
 
 export default workerService;

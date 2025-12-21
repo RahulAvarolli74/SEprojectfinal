@@ -51,11 +51,11 @@ const StudentSidebar = () => {
       <div className="p-4 mx-4 mt-6 bg-[#800000]/5 border border-[#800000]/10 rounded-xl">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-white border border-[#800000]/20 flex items-center justify-center text-[#800000] font-bold font-serif shadow-sm">
-            {user?.roomNumber?.charAt(0) || 'S'}
+            {user?.room_no?.charAt(0) || 'S'}
           </div>
           <div>
             <p className="text-xs text-slate-500 uppercase tracking-wider font-bold">Room Number</p>
-            <p className="text-slate-900 font-serif font-bold text-lg">{user?.roomNumber || 'N/A'}</p>
+            <p className="text-slate-900 font-serif font-bold text-lg">{user?.room_no || 'N/A'}</p>
           </div>
         </div>
       </div>

@@ -53,14 +53,10 @@ const WorkerManagement = () => {
     try {
       setLoading(true);
       const response = await workerService.getWorkers();
-      // response is ApiRes. 
-      // controller getWorkersWithStats returns { activeWorkers: [...], totalWorkers, workerStats: ... }
-      // AND it seems to return ALL workers in activeWorkers? Or maybe I misnamed it in controller?
-      // Let's assume controller returns list of workers. 
-      // If controller returns { workers: [] } use that.
-      // Based on my view of controller which I will do in parallel, I adjust:
-
-      const fetchedWorkers = response.data?.workers || response.data?.activeWorkers || [];
+      
+      // FIX: Access response.data directly (it is the array), handled empty case
+      const fetchedWorkers = Array.isArray(response.data) ? response.data : [];
+      
       setWorkers(fetchedWorkers);
     } catch (error) {
       console.error(error);
@@ -105,6 +101,7 @@ const WorkerManagement = () => {
       } else {
         // Add new worker
         const response = await workerService.createWorker(data);
+        // FIX: Ensure we use the returned data correctly
         const newWorker = response.data || { ...data, _id: Date.now().toString(), isActive: true, totalJobs: 0, rating: 0 };
 
         setWorkers((prev) => [...prev, newWorker]);
@@ -123,12 +120,17 @@ const WorkerManagement = () => {
     try {
       await workerService.toggleWorkerStatus(worker._id);
 
+      // We toggle the local status optimistically or based on response
+      // Backend uses "Active"/"Inactive", frontend might use boolean or string.
+      // Based on model, status is String "Active"/"Inactive".
+      // Frontend UI seems to expect boolean isActive in some places or check status string.
+      // Let's update the string status.
       setWorkers((prev) =>
         prev.map((w) =>
-          w._id === worker._id ? { ...w, isActive: !w.isActive } : w
+          w._id === worker._id ? { ...w, status: w.status === 'Active' ? 'Inactive' : 'Active' } : w
         )
       );
-      toast.success(`Worker ${worker.isActive ? 'disabled' : 'enabled'} successfully`);
+      toast.success(`Worker status updated`);
     } catch (error) {
       console.error(error);
       toast.error('Failed to update worker status');
@@ -194,16 +196,16 @@ const WorkerManagement = () => {
           <Card key={worker._id} className="p-6 bg-white border-slate-200 shadow-md hover:shadow-lg transition-shadow" hover>
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className={`p-3 rounded-xl ${worker.isActive ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500'}`}>
-                  <User className={`w-6 h-6 ${worker.isActive ? 'text-emerald-500' : 'text-slate-400'}`} />
+                <div className={`p-3 rounded-xl ${worker.status === 'Active' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500'}`}>
+                  <User className={`w-6 h-6 ${worker.status === 'Active' ? 'text-emerald-500' : 'text-slate-400'}`} />
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900">{worker.name}</h3>
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${worker.isActive
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${worker.status === 'Active'
                     ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
                     : 'bg-slate-100 text-slate-500 border border-slate-200'
                     }`}>
-                    {worker.isActive ? 'Active' : 'Inactive'}
+                    {worker.status}
                   </span>
                 </div>
               </div>
@@ -213,18 +215,18 @@ const WorkerManagement = () => {
               {worker.phone && (
                 <p className="text-slate-500">📞 {worker.phone}</p>
               )}
-              {worker.address && (
-                <p className="text-slate-500">📍 {worker.address}</p>
+              {worker.assigned_block && (
+                <p className="text-slate-500">📍 {worker.assigned_block}</p>
               )}
             </div>
 
             <div className="flex items-center justify-between py-3 border-t border-slate-100">
               <div className="text-center">
-                <p className="text-lg font-bold text-slate-900">{worker.totalJobs}</p>
+                <p className="text-lg font-bold text-slate-900">{worker.totalJobs || 0}</p>
                 <p className="text-xs text-slate-500">Total Jobs</p>
               </div>
               <div className="text-center">
-                <p className="text-lg font-bold text-amber-500">⭐ {worker.rating || 'N/A'}</p>
+                <p className="text-lg font-bold text-amber-500">⭐ {worker.rating ? parseFloat(worker.rating).toFixed(1) : 'N/A'}</p>
                 <p className="text-xs text-slate-500">Rating</p>
               </div>
             </div>
@@ -236,12 +238,12 @@ const WorkerManagement = () => {
                 className="flex-1 text-slate-600 hover:bg-slate-50"
                 onClick={() => toggleWorkerStatus(worker)}
               >
-                {worker.isActive ? (
+                {worker.status === 'Active' ? (
                   <ToggleRight className="w-4 h-4 mr-1 text-emerald-500" />
                 ) : (
                   <ToggleLeft className="w-4 h-4 mr-1 text-slate-400" />
                 )}
-                {worker.isActive ? 'Disable' : 'Enable'}
+                {worker.status === 'Active' ? 'Disable' : 'Enable'}
               </Button>
               <Button
                 variant="ghost"
@@ -294,16 +296,16 @@ const WorkerManagement = () => {
             {...register('name')}
           />
           <Input
-            label="Phone (Optional)"
+            label="Phone"
             placeholder="Enter phone number"
             error={errors.phone?.message}
             {...register('phone')}
           />
           <Input
-            label="Address (Optional)"
-            placeholder="Enter address"
+            label="Assigned Block"
+            placeholder="e.g. Block A"
             error={errors.address?.message}
-            {...register('address')}
+            {...register('address')} // Using address field for block based on schema map
           />
           <div className="flex gap-3 pt-4">
             <Button

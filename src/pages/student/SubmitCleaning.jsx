@@ -22,10 +22,10 @@ const schema = z.object({
 });
 
 const cleaningTypes = [
-  { id: 'sweeping', label: 'Sweeping' },
-  { id: 'room-cleaning', label: 'Room Cleaning' },
-  { id: 'bathroom-cleaning', label: 'Bathroom Cleaning' },
-  { id: 'corridor-cleaning', label: 'Corridor Cleaning' },
+  { id: 'Sweeping', label: 'Sweeping' },
+  { id: 'Room Cleaning', label: 'Room Cleaning' },
+  { id: 'Bathroom Cleaning', label: 'Bathroom Cleaning' },
+  { id: 'Corridor Cleaning', label: 'Corridor Cleaning' },
 ];
 
 const SubmitCleaning = () => {
@@ -53,13 +53,15 @@ const SubmitCleaning = () => {
   const fetchWorkers = async () => {
     try {
       setWorkersLoading(true);
-      const data = await workerService.getActiveWorkers();
-      // data might be array of workers or { workers: [] } depending on backend response format from workerService.
-      // Based on workerService: returns response.data. 
-      // If endpoint is /admin/workers-stats, it might return array.
-      // Let's assume array or object with workers key. Safely handle.
-      const workerList = Array.isArray(data) ? data : (data.workers || []);
-      setWorkers(workerList);
+      const response = await workerService.getActiveWorkers();
+      
+      // FIX 1: Correctly access the array data
+      const allWorkers = Array.isArray(response.data) ? response.data : [];
+      
+      // FIX 2: Filter only Active workers (status is "Active" in backend model)
+      const activeWorkers = allWorkers.filter(w => w.status === 'Active');
+      
+      setWorkers(activeWorkers);
     } catch (error) {
       console.error(error);
       toast.error('Failed to load workers');
@@ -84,10 +86,18 @@ const SubmitCleaning = () => {
 
     setLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // FIX 3: Use the cleaning service with correct mapping
+      await cleaningService.submitCleaning({
+        workerId: data.workerId, // Mapped to 'worker' in service
+        cleaningTypes: selectedTypes,
+        feedback: data.feedback,
+        image: image
+      });
+      
       setSubmitted(true);
       toast.success('Cleaning report submitted successfully!');
     } catch (error) {
+      console.error(error);
       toast.error(error.response?.data?.message || 'Failed to submit report');
     } finally {
       setLoading(false);
@@ -129,7 +139,6 @@ const SubmitCleaning = () => {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-in fade-in duration-500">
-      {/* Header */}
       <div className="pt-2">
         <button onClick={() => navigate('/student/dashboard')} className="text-slate-500 hover:text-[#800000] flex items-center gap-1 mb-4 transition-colors">
           <ChevronLeft className="w-4 h-4" /> Back to Dashboard
@@ -144,7 +153,6 @@ const SubmitCleaning = () => {
 
       <Card className="p-6 border-slate-200 shadow-md bg-white">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* Worker Selection */}
           {workersLoading ? (
             <div className="py-4">
               <LoadingSpinner size="small" />
@@ -160,7 +168,6 @@ const SubmitCleaning = () => {
             />
           )}
 
-          {/* Cleaning Types */}
           <div className="space-y-3">
             <label className="block text-sm font-medium text-slate-700">
               Cleaning Types <span className="text-red-500">*</span>
@@ -194,7 +201,6 @@ const SubmitCleaning = () => {
             )}
           </div>
 
-          {/* Feedback */}
           <Textarea
             label="Feedback (Optional)"
             placeholder="Any comments about the cleaning service..."
@@ -203,14 +209,12 @@ const SubmitCleaning = () => {
             className="bg-white border-slate-200 text-slate-900 focus:border-[#800000] focus:ring-[#800000]"
           />
 
-          {/* Image Upload */}
           <ImageUpload
             label="Upload Photo (Optional)"
             value={image}
             onChange={setImage}
           />
 
-          {/* Submit Button */}
           <Button
             type="submit"
             loading={loading}
