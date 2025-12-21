@@ -1,11 +1,11 @@
 import { Check } from 'lucide-react';
 
-const Checkbox = ({ 
-  label, 
-  checked, 
-  onChange, 
+const Checkbox = ({
+  label,
+  checked,
+  onChange,
   className = '',
-  ...props 
+  ...props
 }) => {
   return (
     <label className={`flex items-center gap-3 cursor-pointer group ${className}`}>
@@ -23,9 +23,9 @@ const Checkbox = ({
           border-2 
           transition-all duration-300
           flex items-center justify-center
-          ${checked 
-            ? 'bg-violet-600 border-violet-600' 
-            : 'bg-slate-800/50 border-slate-600 group-hover:border-violet-500/50'
+          ${checked
+            ? 'bg-violet-600 border-violet-600'
+            : 'bg-white border-slate-300 group-hover:border-violet-500/50'
           }
         `}>
           {checked && (
@@ -34,7 +34,7 @@ const Checkbox = ({
         </div>
       </div>
       {label && (
-        <span className="text-sm text-slate-300 group-hover:text-white transition-colors">
+        <span className="text-sm text-slate-700 group-hover:text-slate-900 transition-colors">
           {label}
         </span>
       )}

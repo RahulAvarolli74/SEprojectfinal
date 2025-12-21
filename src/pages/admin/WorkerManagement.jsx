@@ -51,16 +51,19 @@ const WorkerManagement = () => {
 
   const fetchWorkers = async () => {
     try {
-      // Mock data
-      setWorkers([
-        { _id: '1', name: 'Raju Kumar', phone: '9876543210', address: 'Block A', isActive: true, totalJobs: 145, rating: 4.5 },
-        { _id: '2', name: 'Shyam Singh', phone: '9876543211', address: 'Block B', isActive: true, totalJobs: 132, rating: 4.2 },
-        { _id: '3', name: 'Mohan Das', phone: '9876543212', address: 'Block A', isActive: true, totalJobs: 158, rating: 4.8 },
-        { _id: '4', name: 'Suresh Yadav', phone: '9876543213', address: 'Block C', isActive: false, totalJobs: 98, rating: 3.9 },
-        { _id: '5', name: 'Ram Prasad', phone: '9876543214', address: 'Block B', isActive: true, totalJobs: 112, rating: 4.3 },
-        { _id: '6', name: 'Krishna Murthy', phone: '9876543215', address: 'Block A', isActive: true, totalJobs: 167, rating: 4.7 },
-      ]);
+      setLoading(true);
+      const response = await workerService.getWorkers();
+      // response is ApiRes. 
+      // controller getWorkersWithStats returns { activeWorkers: [...], totalWorkers, workerStats: ... }
+      // AND it seems to return ALL workers in activeWorkers? Or maybe I misnamed it in controller?
+      // Let's assume controller returns list of workers. 
+      // If controller returns { workers: [] } use that.
+      // Based on my view of controller which I will do in parallel, I adjust:
+
+      const fetchedWorkers = response.data?.workers || response.data?.activeWorkers || [];
+      setWorkers(fetchedWorkers);
     } catch (error) {
+      console.error(error);
       toast.error('Failed to load workers');
     } finally {
       setLoading(false);
@@ -91,6 +94,8 @@ const WorkerManagement = () => {
     try {
       if (editingWorker) {
         // Update worker
+        await workerService.updateWorker(editingWorker._id, data);
+
         setWorkers((prev) =>
           prev.map((w) =>
             w._id === editingWorker._id ? { ...w, ...data } : w
@@ -99,18 +104,15 @@ const WorkerManagement = () => {
         toast.success('Worker updated successfully');
       } else {
         // Add new worker
-        const newWorker = {
-          _id: Date.now().toString(),
-          ...data,
-          isActive: true,
-          totalJobs: 0,
-          rating: 0,
-        };
+        const response = await workerService.createWorker(data);
+        const newWorker = response.data || { ...data, _id: Date.now().toString(), isActive: true, totalJobs: 0, rating: 0 };
+
         setWorkers((prev) => [...prev, newWorker]);
         toast.success('Worker added successfully');
       }
       closeModal();
     } catch (error) {
+      console.error(error);
       toast.error('Operation failed');
     } finally {
       setSubmitting(false);
@@ -119,6 +121,8 @@ const WorkerManagement = () => {
 
   const toggleWorkerStatus = async (worker) => {
     try {
+      await workerService.toggleWorkerStatus(worker._id);
+
       setWorkers((prev) =>
         prev.map((w) =>
           w._id === worker._id ? { ...w, isActive: !w.isActive } : w
@@ -126,6 +130,7 @@ const WorkerManagement = () => {
       );
       toast.success(`Worker ${worker.isActive ? 'disabled' : 'enabled'} successfully`);
     } catch (error) {
+      console.error(error);
       toast.error('Failed to update worker status');
     }
   };
@@ -134,9 +139,11 @@ const WorkerManagement = () => {
     if (!confirm('Are you sure you want to delete this worker?')) return;
 
     try {
+      await workerService.deleteWorker(worker._id);
       setWorkers((prev) => prev.filter((w) => w._id !== worker._id));
       toast.success('Worker deleted successfully');
     } catch (error) {
+      console.error(error);
       toast.error('Failed to delete worker');
     }
   };
@@ -193,8 +200,8 @@ const WorkerManagement = () => {
                 <div>
                   <h3 className="font-semibold text-slate-900">{worker.name}</h3>
                   <span className={`text-xs px-2 py-0.5 rounded-full ${worker.isActive
-                      ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
-                      : 'bg-slate-100 text-slate-500 border border-slate-200'
+                    ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
+                    : 'bg-slate-100 text-slate-500 border border-slate-200'
                     }`}>
                     {worker.isActive ? 'Active' : 'Inactive'}
                   </span>

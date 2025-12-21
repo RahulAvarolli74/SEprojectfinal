@@ -23,7 +23,7 @@ const Textarea = forwardRef(({
           border border-slate-200
           rounded-xl 
           text-slate-900 
-          placeholder-slate-400
+          placeholder-slate-600
           focus:outline-none 
           focus:ring-2 
           focus:ring-[#800000]/20

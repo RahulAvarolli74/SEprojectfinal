@@ -126,11 +126,11 @@ const AdminLogin = () => {
             </div>
           </Card>
 
-          <div className="mt-6 text-center">
+          {/* <div className="mt-6 text-center">
             <p className="text-xs text-slate-500">
               Demo: admin / admin123
             </p>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

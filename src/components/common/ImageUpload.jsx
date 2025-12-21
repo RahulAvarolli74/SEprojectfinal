@@ -1,9 +1,9 @@
 import { useState, useRef } from 'react';
 import { Upload, X, Image as ImageIcon } from 'lucide-react';
 
-const ImageUpload = ({ 
-  value, 
-  onChange, 
+const ImageUpload = ({
+  value,
+  onChange,
   error,
   label = 'Upload Image',
   accept = 'image/*',
@@ -48,7 +48,7 @@ const ImageUpload = ({
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     const file = e.dataTransfer.files?.[0];
     handleFile(file);
   };
@@ -64,17 +64,17 @@ const ImageUpload = ({
   return (
     <div className="space-y-1.5">
       {label && (
-        <label className="block text-sm font-medium text-slate-300">
+        <label className="block text-sm font-medium text-slate-700">
           {label}
         </label>
       )}
-      
+
       {preview ? (
         <div className="relative group">
           <img
             src={preview}
             alt="Preview"
-            className="w-full h-48 object-cover rounded-xl border border-slate-700/50"
+            className="w-full h-48 object-cover rounded-xl border border-slate-200"
           />
           <button
             type="button"
@@ -97,9 +97,9 @@ const ImageUpload = ({
             border-2 border-dashed rounded-xl
             cursor-pointer
             transition-all duration-300
-            ${dragActive 
-              ? 'border-violet-500 bg-violet-500/10' 
-              : 'border-slate-700/50 hover:border-violet-500/50 bg-slate-800/30'
+            ${dragActive
+              ? 'border-violet-500 bg-violet-500/10'
+              : 'border-slate-300 hover:border-violet-500/50 bg-slate-50'
             }
             ${error ? 'border-red-500/50' : ''}
           `}
@@ -107,7 +107,7 @@ const ImageUpload = ({
           <div className="flex flex-col items-center justify-center p-6 text-center">
             <div className={`
               p-3 rounded-xl mb-3 transition-colors duration-300
-              ${dragActive ? 'bg-violet-500/20' : 'bg-slate-800/50'}
+              ${dragActive ? 'bg-violet-500/20' : 'bg-slate-100'}
             `}>
               {dragActive ? (
                 <ImageIcon className="w-8 h-8 text-violet-400" />
@@ -115,14 +115,14 @@ const ImageUpload = ({
                 <Upload className="w-8 h-8 text-slate-500" />
               )}
             </div>
-            <p className="text-sm text-slate-400 mb-1">
+            <p className="text-sm text-slate-600 mb-1">
               {dragActive ? 'Drop image here' : 'Drag & drop or click to upload'}
             </p>
             <p className="text-xs text-slate-500">
               PNG, JPG up to {maxSize / 1024 / 1024}MB
             </p>
           </div>
-          
+
           <input
             ref={inputRef}
             type="file"
@@ -132,7 +132,7 @@ const ImageUpload = ({
           />
         </div>
       )}
-      
+
       {error && (
         <p className="text-sm text-red-400">{error}</p>
       )}

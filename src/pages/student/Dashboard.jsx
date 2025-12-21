@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { Card, Button, LoadingSpinner } from '../../components/common';
 import { useAuth } from '../../contexts/AuthContext';
+import { authService, cleaningService } from '../../services';
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
@@ -33,18 +34,24 @@ const StudentDashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
+      setLoading(true);
+      // Backend /students/dashboard returns ApiRes { statusCode, data: { student, roomDetails, stats }, success }
+      const dashboardInfo = await authService.getCurrentUser();
+      const dashboardData = dashboardInfo.data || {}; // Safety check
+
+      // Also fetch recent cleaning history if not included in dashboardInfo
+      const history = await cleaningService.getStudentHistory({ limit: 5 });
+      const historyLogs = history.data || []; // Assuming history also returns ApiRes with logs in .data or .data.logs
+
       setDashboardData({
-        lastCleaningDate: '2025-11-27',
-        submissionsThisMonth: 12,
-        openIssues: 2,
-        recentCleanings: [
-          { id: 1, date: '2025-11-27', worker: 'Raju', types: ['Sweeping', 'Room Cleaning'] },
-          { id: 2, date: '2025-11-25', worker: 'Shyam', types: ['Bathroom Cleaning'] },
-          { id: 3, date: '2025-11-23', worker: 'Raju', types: ['Corridor Cleaning', 'Sweeping'] },
-        ],
+        lastCleaningDate: dashboardData.stats?.lastCleaningDate || null,
+        submissionsThisMonth: dashboardData.stats?.monthCleanings || 0,
+        openIssues: dashboardData.stats?.openIssues || 0,
+        recentCleanings: historyLogs, // Adjust based on actual history response nesting
       });
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
+      // toast.error("Could not load dashboard data");
     } finally {
       setLoading(false);
     }
@@ -61,7 +68,7 @@ const StudentDashboard = () => {
   }
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="p-6">
       {/* Welcome Section */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-slate-900 font-serif mb-2">
@@ -89,85 +96,36 @@ const StudentDashboard = () => {
         ))}
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid md:grid-cols-2 gap-8">
-        <div className="space-y-6">
-          <h2 className="text-xl font-bold text-slate-900 font-serif flex items-center gap-2">
-            Quick Actions
-          </h2>
-          <div className="grid gap-4">
-            <button
-              onClick={() => navigate('/student/submit-cleaning')}
-              className="p-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-[#800000] hover:shadow-md transition-all group text-left flex items-center justify-between"
-            >
-              <div className="flex items-center gap-4">
-                <div className="p-2 bg-[#800000]/10 rounded-lg group-hover:bg-[#800000] transition-colors">
-                  <CheckCircle2 className="w-5 h-5 text-[#800000] group-hover:text-white transition-colors" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-slate-900">Verify Cleaning</h3>
-                  <p className="text-sm text-slate-500">Submit proof of cleaning</p>
-                </div>
-              </div>
-              <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-[#800000] transition-colors" />
-            </button>
-
-            <button
-              onClick={() => navigate('/student/raise-issue')}
-              className="p-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-[#800000] hover:shadow-md transition-all group text-left flex items-center justify-between"
-            >
-              <div className="flex items-center gap-4">
-                <div className="p-2 bg-[#800000]/10 rounded-lg group-hover:bg-[#800000] transition-colors">
-                  <AlertCircle className="w-5 h-5 text-[#800000] group-hover:text-white transition-colors" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-slate-900">Report Issue</h3>
-                  <p className="text-sm text-slate-500">Raise a complaint</p>
-                </div>
-              </div>
-              <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-[#800000] transition-colors" />
-            </button>
-
-            <button
-              onClick={() => navigate('/student/history')}
-              className="p-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-[#800000] hover:shadow-md transition-all group text-left flex items-center justify-between"
-            >
-              <div className="flex items-center gap-4">
-                <div className="p-2 bg-[#800000]/10 rounded-lg group-hover:bg-[#800000] transition-colors">
-                  <History className="w-5 h-5 text-[#800000] group-hover:text-white transition-colors" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-slate-900">History</h3>
-                  <p className="text-sm text-slate-500">View past records</p>
-                </div>
-              </div>
-              <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-[#800000] transition-colors" />
-            </button>
-          </div>
-        </div>
-
-        {/* Notifications / Recent Activity Placeholder */}
-        <div className="space-y-6">
-          <h2 className="text-xl font-bold text-slate-900 font-serif flex items-center gap-2">
-            <Bell className="w-5 h-5 text-[#800000]" />
-            Recent Updates
-          </h2>
-          <Card className="p-6 bg-white rounded-xl border border-slate-200 shadow-sm">
-            <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="flex items-start gap-3 pb-4 border-b border-slate-100 last:border-0 last:pb-0">
-                  <div className="w-2 h-2 rounded-full bg-[#800000] mt-2 flex-shrink-0" />
+      {/* Notifications / Recent Activity Placeholder */}
+      <div className="space-y-6">
+        <h2 className="text-xl font-bold text-slate-900 font-serif flex items-center gap-2">
+          <Bell className="w-5 h-5 text-[#800000]" />
+          Recent Updates
+        </h2>
+        <Card className="p-6 bg-white rounded-xl border border-slate-200 shadow-sm">
+          <div className="space-y-4">
+            {dashboardData.recentCleanings.length > 0 ? (
+              dashboardData.recentCleanings.map((cleaning, i) => (
+                <div key={cleaning._id || i} className="flex items-start gap-3 pb-4 border-b border-slate-100 last:border-0 last:pb-0">
+                  <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${cleaning.cleanstatus === 'Completed' ? 'bg-emerald-500' : 'bg-[#800000]'}`} />
                   <div>
-                    <p className="text-sm text-slate-800 font-medium">Room inspection scheduled for tomorrow</p>
-                    <p className="text-xs text-slate-500 mt-1">2 hours ago</p>
+                    <p className="text-sm text-slate-800 font-medium">
+                      {cleaning.cleaningType?.join(', ') || 'Room Service'} - {cleaning.cleanstatus}
+                    </p>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {new Date(cleaning.createdAt).toLocaleDateString()}
+                    </p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </Card>
-        </div>
+              ))
+            ) : (
+              <p className="text-sm text-slate-500 ml-5">No recent activity.</p>
+            )}
+          </div>
+        </Card>
       </div>
     </div>
+
   );
 };
 

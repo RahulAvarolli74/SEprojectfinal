@@ -38,70 +38,25 @@ const CleaningLogs = () => {
 
   const fetchData = async () => {
     try {
-      // Mock data
-      setWorkers([
-        { _id: '1', name: 'Raju Kumar' },
-        { _id: '2', name: 'Shyam Singh' },
-        { _id: '3', name: 'Mohan Das' },
-        { _id: '4', name: 'Suresh Yadav' },
-      ]);
+      setLoading(true);
 
-      setLogs([
-        {
-          _id: '1',
-          date: '2025-11-27T10:30:00Z',
-          room: { number: 'A-101' },
-          worker: { name: 'Raju Kumar' },
-          cleaningTypes: ['Sweeping', 'Room Cleaning'],
-          feedback: 'Great job! Very thorough cleaning.',
-          image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400',
-        },
-        {
-          _id: '2',
-          date: '2025-11-27T09:15:00Z',
-          room: { number: 'B-205' },
-          worker: { name: 'Shyam Singh' },
-          cleaningTypes: ['Bathroom Cleaning'],
-          feedback: 'Good work',
-          image: null,
-        },
-        {
-          _id: '3',
-          date: '2025-11-26T14:00:00Z',
-          room: { number: 'A-103' },
-          worker: { name: 'Mohan Das' },
-          cleaningTypes: ['Corridor Cleaning', 'Sweeping'],
-          feedback: '',
-          image: null,
-        },
-        {
-          _id: '4',
-          date: '2025-11-26T11:45:00Z',
-          room: { number: 'C-301' },
-          worker: { name: 'Raju Kumar' },
-          cleaningTypes: ['Room Cleaning', 'Bathroom Cleaning'],
-          feedback: 'Excellent service!',
-          image: 'https://images.unsplash.com/photo-1585421514738-01798e348b17?w=400',
-        },
-        {
-          _id: '5',
-          date: '2025-11-25T08:30:00Z',
-          room: { number: 'B-102' },
-          worker: { name: 'Suresh Yadav' },
-          cleaningTypes: ['Sweeping'],
-          feedback: '',
-          image: null,
-        },
-        {
-          _id: '6',
-          date: '2025-11-25T16:20:00Z',
-          room: { number: 'A-201' },
-          worker: { name: 'Mohan Das' },
-          cleaningTypes: ['Room Cleaning'],
-          feedback: 'Nice work, room looks spotless!',
-          image: 'https://images.unsplash.com/photo-1527515545081-5db817172677?w=400',
-        },
-      ]);
+      // Fetch Workers
+      const workersData = await workerService.getWorkersWithStats(); // Or getAllWorkers if available
+      // Check response structure for workers. workerService.getWorkersWithStats -> /admin/workers-stats
+      // If that returns ApiRes { data: { activeWorkers: [], ... } } or just workers list?
+      // Let's assume workersData.data or workersData directly if service unwraps it.
+      // Looking at service, it returns response.data.
+      // So if backend sends ApiRes, workersData is { statusCode, data, success }
+      const fetchedWorkers = workersData.data?.activeWorkers || workersData.data || [];
+      setWorkers(fetchedWorkers);
+
+      // Fetch Logs
+      const logsResponse = await cleaningService.getAllCleaningLogs(filters);
+      // logsResponse is ApiRes { data: [...] } or { data: { logs: [] } }
+      // Ideally backend returns list of logs.
+      const fetchedLogs = logsResponse.data?.logs || logsResponse.data || [];
+      setLogs(fetchedLogs);
+
     } catch (error) {
       console.error('Failed to fetch data:', error);
     } finally {

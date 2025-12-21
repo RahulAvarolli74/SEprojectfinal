@@ -47,10 +47,13 @@ const RaiseIssue = () => {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Backend expects: issueType, description, image (optional)
+      // data object from react-hook-form matches this structure.
+      await issueService.createIssue(data);
       setSubmitted(true);
       toast.success('Issue reported successfully!');
     } catch (error) {
+      console.error(error);
       toast.error(error.response?.data?.message || 'Failed to submit issue');
     } finally {
       setLoading(false);
@@ -109,7 +112,7 @@ const RaiseIssue = () => {
         <div className="flex gap-3">
           <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
           <div>
-            <p className="text-amber-800 text-sm">
+            <p className="text-black text-sm">
               Please provide as much detail as possible to help us resolve your issue quickly.
               You can also upload an image to support your complaint.
             </p>
@@ -150,7 +153,7 @@ const RaiseIssue = () => {
           <Button
             type="submit"
             loading={loading}
-            className="w-full bg-[#800000] hover:bg-[#600000] text-white font-bold py-3"
+            className="w-full bg-[#800000] hover:bg-[#600000] text-black font-bold py-3"
             size="large"
             icon={Send}
           >

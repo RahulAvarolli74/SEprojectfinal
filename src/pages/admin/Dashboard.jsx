@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Users,
   ClipboardCheck,
@@ -21,50 +21,79 @@ import {
   LineChart,
   Line
 } from 'recharts';
+import { authService } from '../../services';
+import { LoadingSpinner } from '../../components/common';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
 
-  // Mock Data mirroring the screenshot
+  const [loading, setLoading] = useState(true);
+  const [dashboardData, setDashboardData] = useState({
+    stats: {
+      totalWorkers: 0,
+      cleaningsToday: 0,
+      weeklySubmissions: 0,
+      pendingIssues: 0
+    },
+    charts: {
+      workerPerformance: [],
+      taskDistribution: [],
+      weeklyTrend: []
+    }
+  });
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      const response = await authService.getAdminDashboard();
+      // response is ApiRes: { statusCode, data: { stats, charts, recentIssues }, success }
+      const data = response.data || {};
+
+      setDashboardData({
+        stats: data.stats || {
+          totalWorkers: 0,
+          cleaningsToday: 0,
+          weeklySubmissions: 0,
+          pendingIssues: 0
+        },
+        charts: {
+          workerPerformance: data.charts?.workerPerformance || [],
+          taskDistribution: data.charts?.taskDistribution || [],
+          weeklyTrend: data.charts?.weeklyTrend || []
+        }
+      });
+    } catch (error) {
+      console.error("Failed to fetch admin dashboard", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Stats mapped from state
   const stats = [
-    { title: 'Total Workers', value: '12', change: '+2 vs last week', icon: Users, color: 'bg-violet-500', iconColor: 'text-violet-500' },
-    { title: 'Cleanings Today', value: '45', change: '+12% vs last week', icon: ClipboardCheck, color: 'bg-emerald-500', iconColor: 'text-emerald-500' },
-    { title: 'Weekly Submissions', value: '284', change: '+8% vs last week', icon: Calendar, color: 'bg-blue-500', iconColor: 'text-blue-500' },
-    { title: 'Open Issues', value: '8', change: '-3 vs last week', icon: AlertTriangle, color: 'bg-amber-500', iconColor: 'text-amber-500' },
+    { title: 'Total Workers', value: dashboardData.stats.totalWorkers.toString(), change: 'Active', icon: Users, color: 'bg-violet-500', iconColor: 'text-violet-500' },
+    { title: 'Cleanings Today', value: dashboardData.stats.cleaningsToday.toString(), change: 'Daily', icon: ClipboardCheck, color: 'bg-emerald-500', iconColor: 'text-emerald-500' },
+    { title: 'Weekly Submissions', value: dashboardData.stats.weeklySubmissions.toString(), change: 'Last 7 Days', icon: Calendar, color: 'bg-blue-500', iconColor: 'text-blue-500' },
+    { title: 'Open Issues', value: dashboardData.stats.pendingIssues.toString(), change: 'Action Required', icon: AlertTriangle, color: 'bg-amber-500', iconColor: 'text-amber-500' },
   ];
 
-  // const quickActions = [
-  //   { label: 'Manage Faculty', icon: Users, path: '/admin/faculty', color: 'bg-blue-50 text-blue-600' },
-  //   { label: 'Register User', icon: Users, path: '/admin/users', color: 'bg-emerald-50 text-emerald-600' },
-  //   { label: 'Add Event', icon: Calendar, path: '/admin/events', color: 'bg-purple-50 text-purple-600' },
-  //   { label: 'Manage Materials', icon: ClipboardCheck, path: '/admin/materials', color: 'bg-amber-50 text-amber-600' },
-  // ];
+  // Transform backend data to Recharts format if needed
+  // Backend workerPerformance: [{ name: "Raju", count: 10 }] -> matches
+  // Backend taskDistribution: [{ name: "Sweeping", value: 5 }] -> matches
+  // Backend weeklyTrend: [{ _id: "2023-10-01", count: 5 }] -> needs mapping to "day"
 
-  const cleaningData = [
-    { name: 'Raju', value: 45 },
-    { name: 'Shyam', value: 38 },
-    { name: 'Mohan', value: 52 },
-    { name: 'Suresh', value: 41 },
-    { name: 'Ram', value: 35 },
-    { name: 'Krishna', value: 48 },
-  ];
+  const weeklyTrendData = dashboardData.charts.weeklyTrend.map(item => ({
+    day: new Date(item._id).toLocaleDateString('en-US', { weekday: 'short' }),
+    value: item.count
+  }));
 
-  const taskData = [
-    { name: 'Bathroom', value: 30, color: '#2dd4bf' }, // Teal
-    { name: 'Corridor', value: 20, color: '#fbbf24' }, // Amber
-    { name: 'Room Cleaning', value: 35, color: '#34d399' }, // Emerald
-    { name: 'Sweeping', value: 15, color: '#818cf8' }, // Indigo
-  ];
+  // Colors for Pie Chart
+  const COLORS = ['#2dd4bf', '#fbbf24', '#34d399', '#818cf8', '#f87171', '#a78bfa'];
 
-  const weeklyTrend = [
-    { day: 'Mon', value: 42 },
-    { day: 'Tue', value: 38 },
-    { day: 'Wed', value: 45 },
-    { day: 'Thu', value: 51 },
-    { day: 'Fri', value: 48 },
-    { day: 'Sat', value: 35 },
-    { day: 'Sun', value: 28 },
-  ];
 
   return (
     <div className="space-y-6">
@@ -121,15 +150,19 @@ const AdminDashboard = () => {
           <h3 className="font-bold text-slate-900 mb-6 font-serif">Cleanings per Worker</h3>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={cleaningData} layout="vertical" margin={{ left: 40 }}>
+              {/* Note: Backend returns { name: "Name", count: 10 } -> dataKey should be "count" not "value" unless mapped. 
+                  Let's map it or change prop. Backend aggregate returns 'count'. 
+                  Wait, let's map it in render or change dataKey. 
+                  Let's change dataKey to "count" for robustness. */}
+              <BarChart data={dashboardData.charts.workerPerformance} layout="vertical" margin={{ left: 40 }}>
                 <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
                 <XAxis type="number" />
-                <YAxis dataKey="name" type="category" width={60} />
+                <YAxis dataKey="name" type="category" width={80} />
                 <Tooltip
                   contentStyle={{ backgroundColor: '#fff', borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                   cursor={{ fill: '#f8fafc' }}
                 />
-                <Bar dataKey="value" fill="#818cf8" radius={[0, 4, 4, 0]} barSize={32} />
+                <Bar dataKey="count" fill="#818cf8" radius={[0, 4, 4, 0]} barSize={32} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -142,7 +175,7 @@ const AdminDashboard = () => {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={taskData}
+                  data={dashboardData.charts.taskDistribution}
                   cx="50%"
                   cy="50%"
                   innerRadius={60}
@@ -150,8 +183,8 @@ const AdminDashboard = () => {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {taskData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  {dashboardData.charts.taskDistribution.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip />
@@ -167,7 +200,7 @@ const AdminDashboard = () => {
         <h3 className="font-bold text-slate-900 mb-6 font-serif">Weekly Trend</h3>
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={weeklyTrend}>
+            <LineChart data={weeklyTrendData}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
               <XAxis dataKey="day" axisLine={false} tickLine={false} dy={10} />
               <YAxis axisLine={false} tickLine={false} />

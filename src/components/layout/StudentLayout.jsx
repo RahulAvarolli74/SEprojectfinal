@@ -1,27 +1,18 @@
 import { Outlet } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import StudentNavbar from './StudentNavbar';
+import StudentSidebar from './StudentSidebar';
 
 const StudentLayout = () => {
-  const { user } = useAuth();
+  const { logout } = useAuth(); // Assuming logout is needed or handle in Sidebar? 
+  // StudentSidebar handles logout internally so we might not need it here, but let's keep consistency.
 
   return (
-    <div className="min-h-screen relative font-sans bg-gray-50 flex flex-col text-slate-900">
-      {/* Background & Overlay */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <img
-          src="/college.png"
-          alt="KLE Tech Campus"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-white/90 backdrop-blur-[2px]"></div>
-      </div>
-
-      <StudentNavbar user={user} />
+    <div className="min-h-screen bg-slate-50 flex text-slate-900">
+      <StudentSidebar />
 
       {/* Main content */}
-      <main className="relative z-10 flex-grow pt-24 px-6 pb-12">
-        <div className="max-w-7xl mx-auto">
+      <main className="flex-1 relative flex flex-col h-screen overflow-y-auto w-full">
+        <div className="flex-1 p-6 lg:p-8">
           <Outlet />
         </div>
       </main>

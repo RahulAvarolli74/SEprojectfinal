@@ -62,59 +62,14 @@ const IssueManagement = () => {
 
   const fetchIssues = async () => {
     try {
-      // Mock data
-      setIssues([
-        {
-          _id: '1',
-          room: { number: 'A-101' },
-          issueType: 'cleaning-quality',
-          description: 'The bathroom was not cleaned properly. There were still stains on the floor and the toilet was not sanitized.',
-          status: 'in-progress',
-          image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400',
-          adminComment: 'We are looking into this issue.',
-          createdAt: '2025-11-26T10:30:00Z',
-        },
-        {
-          _id: '2',
-          room: { number: 'B-205' },
-          issueType: 'missed-cleaning',
-          description: 'The scheduled cleaning on Monday was completely missed. No worker came to clean my room.',
-          status: 'open',
-          image: null,
-          adminComment: null,
-          createdAt: '2025-11-25T14:15:00Z',
-        },
-        {
-          _id: '3',
-          room: { number: 'C-301' },
-          issueType: 'worker-behavior',
-          description: 'The cleaning worker was very rude and did not listen to my requests.',
-          status: 'resolved',
-          image: null,
-          adminComment: 'We have addressed this with the worker. Thank you for reporting.',
-          createdAt: '2025-11-20T09:00:00Z',
-        },
-        {
-          _id: '4',
-          room: { number: 'A-103' },
-          issueType: 'equipment',
-          description: 'The cleaning supplies used have a very strong chemical smell that causes headaches.',
-          status: 'open',
-          image: null,
-          adminComment: null,
-          createdAt: '2025-11-24T11:45:00Z',
-        },
-        {
-          _id: '5',
-          room: { number: 'B-102' },
-          issueType: 'corridor',
-          description: 'The corridor outside my room has not been cleaned for a week.',
-          status: 'closed',
-          image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400',
-          adminComment: 'Issue has been resolved. Corridor cleaning schedule updated.',
-          createdAt: '2025-11-15T08:30:00Z',
-        },
-      ]);
+      setLoading(true);
+      const response = await issueService.getAllIssues(filters);
+      // response is ApiRes. data might be { issues: [] } or just []
+      // Checking issue.controller.js -> getAllIssues
+      // It returns new ApiRes(200, issues, "...")
+      // So response.data IS the array of issues.
+      const fetchedIssues = response.data || [];
+      setIssues(fetchedIssues);
     } catch (error) {
       console.error('Failed to fetch issues:', error);
     } finally {
@@ -154,7 +109,9 @@ const IssueManagement = () => {
 
     setSubmitting(true);
     try {
-      // Update issue locally
+      await issueService.resolveIssue(selectedIssue._id, newStatus, comment);
+
+      // Update local state to reflect change
       setIssues((prev) =>
         prev.map((issue) =>
           issue._id === selectedIssue._id
@@ -165,6 +122,7 @@ const IssueManagement = () => {
       toast.success('Issue updated successfully');
       closeModal();
     } catch (error) {
+      console.error(error);
       toast.error('Failed to update issue');
     } finally {
       setSubmitting(false);

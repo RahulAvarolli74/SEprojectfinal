@@ -52,14 +52,16 @@ const SubmitCleaning = () => {
 
   const fetchWorkers = async () => {
     try {
-      // Mock data for demonstration
-      setWorkers([
-        { _id: '1', name: 'Raju Kumar' },
-        { _id: '2', name: 'Shyam Singh' },
-        { _id: '3', name: 'Mohan Das' },
-        { _id: '4', name: 'Suresh Yadav' },
-      ]);
+      setWorkersLoading(true);
+      const data = await workerService.getActiveWorkers();
+      // data might be array of workers or { workers: [] } depending on backend response format from workerService.
+      // Based on workerService: returns response.data. 
+      // If endpoint is /admin/workers-stats, it might return array.
+      // Let's assume array or object with workers key. Safely handle.
+      const workerList = Array.isArray(data) ? data : (data.workers || []);
+      setWorkers(workerList);
     } catch (error) {
+      console.error(error);
       toast.error('Failed to load workers');
     } finally {
       setWorkersLoading(false);
@@ -102,7 +104,7 @@ const SubmitCleaning = () => {
   if (submitted) {
     return (
       <div className="max-w-2xl mx-auto pt-8">
-        <Card className="p-8 text-center border-slate-200 shadow-lg bg-white">
+        <Card className="p-8 text-center border-slate-700 shadow-lg bg-white">
           <div className="p-4 bg-emerald-100 rounded-full w-fit mx-auto mb-6">
             <CheckCircle2 className="w-12 h-12 text-emerald-600" />
           </div>
@@ -113,7 +115,7 @@ const SubmitCleaning = () => {
             Your cleaning report has been recorded. Thank you for helping maintain cleanliness.
           </p>
           <div className="flex gap-4 justify-center">
-            <Button onClick={handleReset} variant="outline" className="border-slate-300 text-slate-700 hover:bg-slate-50">
+            <Button onClick={handleReset} variant="outline" className="border-slate-700 text-slate-700 hover:bg-slate-50">
               Submit Another
             </Button>
             <Button onClick={() => navigate('/student/dashboard')} className="bg-[#800000] hover:bg-[#600000] text-white">
@@ -180,6 +182,7 @@ const SubmitCleaning = () => {
                     label={type.label}
                     checked={selectedTypes.includes(type.id)}
                     onChange={() => { }}
+                    className="pointer-events-none"
                   />
                 </div>
               ))}

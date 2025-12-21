@@ -32,56 +32,21 @@ const CleaningHistory = () => {
 
   const fetchData = async () => {
     try {
-      // Mock data for demonstration
-      setWorkers([
-        { _id: '1', name: 'Raju Kumar' },
-        { _id: '2', name: 'Shyam Singh' },
-        { _id: '3', name: 'Mohan Das' },
-        { _id: '4', name: 'Suresh Yadav' },
-      ]);
+      setLoading(true);
 
-      setHistory([
-        {
-          _id: '1',
-          date: '2025-11-27T10:30:00Z',
-          worker: { name: 'Raju Kumar' },
-          cleaningTypes: ['Sweeping', 'Room Cleaning'],
-          feedback: 'Great job! Very thorough cleaning.',
-          image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400',
-        },
-        {
-          _id: '2',
-          date: '2025-11-25T14:15:00Z',
-          worker: { name: 'Shyam Singh' },
-          cleaningTypes: ['Bathroom Cleaning'],
-          feedback: '',
-          image: null,
-        },
-        {
-          _id: '3',
-          date: '2025-11-23T09:00:00Z',
-          worker: { name: 'Raju Kumar' },
-          cleaningTypes: ['Corridor Cleaning', 'Sweeping'],
-          feedback: 'Could be better.',
-          image: null,
-        },
-        {
-          _id: '4',
-          date: '2025-11-20T11:45:00Z',
-          worker: { name: 'Mohan Das' },
-          cleaningTypes: ['Room Cleaning', 'Bathroom Cleaning'],
-          feedback: 'Excellent service!',
-          image: 'https://images.unsplash.com/photo-1585421514738-01798e348b17?w=400',
-        },
-        {
-          _id: '5',
-          date: '2025-11-18T08:30:00Z',
-          worker: { name: 'Suresh Yadav' },
-          cleaningTypes: ['Sweeping'],
-          feedback: '',
-          image: null,
-        },
-      ]);
+      // Fetch Workers (for filter)
+      const workersData = await workerService.getWorkersWithStats();
+      // workersData is ApiRes. data is { activeWorkers: ... } or array?
+      // Based on controller, it returns { activeWorkers: [], totalWorkers: ... }
+      const fetchedWorkers = workersData.data?.activeWorkers || workersData.data || [];
+      setWorkers(fetchedWorkers);
+
+      // Fetch History
+      const historyResponse = await cleaningService.getStudentHistory(filters);
+      // historyResponse is ApiRes { data: { logs: [] } }
+      const fetchedHistory = historyResponse.data?.logs || historyResponse.data || [];
+      setHistory(fetchedHistory);
+
     } catch (error) {
       console.error('Failed to fetch history:', error);
     } finally {

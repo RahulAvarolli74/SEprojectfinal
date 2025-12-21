@@ -34,7 +34,7 @@ function Header() {
     return (
         <header
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 transform ${isVisible ? 'translate-y-0' : '-translate-y-full'
-                } ${isScrolled ? 'bg-white/95 backdrop-blur-md shadow-sm py-2' : 'bg-transparent py-4'}`}
+                } ${isScrolled ? 'backdrop-blur-md shadow-sm py-2' : 'bg-transparent py-4'}`}
         >
             <div className="max-w-[1400px] mx-auto px-6">
                 <div className="flex items-center justify-between">

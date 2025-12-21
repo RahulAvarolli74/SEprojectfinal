@@ -32,45 +32,13 @@ const MyIssues = () => {
 
   const fetchIssues = async () => {
     try {
-      // Mock data for demonstration
-      setIssues([
-        {
-          _id: '1',
-          issueType: 'cleaning-quality',
-          description: 'The bathroom was not cleaned properly. There were still stains on the floor and the toilet was not sanitized.',
-          status: 'in-progress',
-          image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400',
-          adminComment: 'We are looking into this issue. A supervisor will inspect your bathroom today.',
-          createdAt: '2025-11-26T10:30:00Z',
-        },
-        {
-          _id: '2',
-          issueType: 'missed-cleaning',
-          description: 'The scheduled cleaning on Monday was completely missed. No worker came to clean my room.',
-          status: 'open',
-          image: null,
-          adminComment: null,
-          createdAt: '2025-11-25T14:15:00Z',
-        },
-        {
-          _id: '3',
-          issueType: 'equipment',
-          description: 'The cleaning supplies used have a very strong chemical smell that causes headaches.',
-          status: 'resolved',
-          image: null,
-          adminComment: 'We have switched to eco-friendly cleaning products. Please let us know if the issue persists.',
-          createdAt: '2025-11-20T09:00:00Z',
-        },
-        {
-          _id: '4',
-          issueType: 'worker-behavior',
-          description: 'The cleaning worker was very rude and did not listen to my requests.',
-          status: 'closed',
-          image: null,
-          adminComment: 'We have addressed this with the worker. Thank you for bringing this to our attention.',
-          createdAt: '2025-11-15T11:45:00Z',
-        },
-      ]);
+      setLoading(true);
+      const response = await issueService.getMyIssues();
+      // response is ApiRes. data might be { issues: [] } or just []
+      // Checking issue.controller.js -> getMyIssues returns issues (array)
+      // So response.data IS the array.
+      const fetchedIssues = response.data || [];
+      setIssues(fetchedIssues);
     } catch (error) {
       console.error('Failed to fetch issues:', error);
     } finally {

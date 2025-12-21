@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import api from '../utils/axiosConfig';
+import { authService } from '../services';
 
 const AuthContext = createContext(null);
 
@@ -18,7 +19,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     const token = localStorage.getItem('token');
-    
+
     if (storedUser && token) {
       setUser(JSON.parse(storedUser));
     }
@@ -26,40 +27,38 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const loginStudent = async (roomNumber, password) => {
-    // Mock authentication - bypass API until backend is ready
-    const mockUser = {
-      id: '1',
-      name: 'jndjsr',
-      roomNumber: roomNumber || '101',
-      email: 'student@demo.com',
-      role: 'student'
-    };
-    
-    localStorage.setItem('token', 'mock-student-token');
-    localStorage.setItem('user', JSON.stringify(mockUser));
-    setUser(mockUser);
-    
-    return { success: true };
+    try {
+      const data = await authService.studentLogin(roomNumber, password);
+      // data: { user, accessToken, refreshToken } from backend
+      localStorage.setItem('token', data.data.accessToken);
+      localStorage.setItem('user', JSON.stringify(data.data.user));
+      setUser(data.data.user);
+      return { success: true };
+    } catch (error) {
+      console.error("Login failed", error);
+      return { success: false, error: error.message };
+    }
   };
 
   const loginAdmin = async (username, password) => {
-    // Mock authentication - bypass API until backend is ready
-    const mockUser = {
-      id: '1',
-      name: 'Admin',
-      username: username || 'admin',
-      email: 'admin@demo.com',
-      role: 'admin'
-    };
-    
-    localStorage.setItem('token', 'mock-admin-token');
-    localStorage.setItem('user', JSON.stringify(mockUser));
-    setUser(mockUser);
-    
-    return { success: true };
+    try {
+      const data = await authService.adminLogin(username, password);
+      localStorage.setItem('token', data.data.accessToken);
+      localStorage.setItem('user', JSON.stringify(data.data.user));
+      setUser(data.data.user);
+      return { success: true };
+    } catch (error) {
+      console.error("Admin Login failed", error);
+      return { success: false, error: error.message };
+    }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await authService.logout();
+    } catch (err) {
+      console.error("Logout error", err);
+    }
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);

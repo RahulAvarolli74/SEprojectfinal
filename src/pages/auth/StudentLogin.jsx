@@ -127,11 +127,11 @@ const StudentLogin = () => {
             </div>
           </Card>
 
-          <div className="mt-6 text-center">
+          {/* <div className="mt-6 text-center">
             <p className="text-xs text-slate-500">
               Demo: Room A-101 / password123
             </p>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
@@ -139,3 +139,4 @@ const StudentLogin = () => {
 };
 
 export default StudentLogin;
+
