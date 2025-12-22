@@ -72,14 +72,11 @@ const CleaningLogs = () => {
     });
   };
 
-  const filteredLogs = logs.filter((log) => {
-    // FIX: Use optional chaining (?.) in case worker was deleted
+const filteredLogs = logs.filter((log) => {
     if (filters.worker && log.worker?.name !== filters.worker) return false;
     
-    // FIX: Use log.room_no instead of log.room.number
-    if (filters.room && !log.room_no.toLowerCase().includes(filters.room.toLowerCase())) return false;
+    if (filters.room && !log.room_no?.toLowerCase().includes(filters.room.toLowerCase())) return false;
     
-    // FIX: Use log.createdAt instead of log.date
     if (filters.startDate && new Date(log.createdAt) < new Date(filters.startDate)) return false;
     if (filters.endDate && new Date(log.createdAt) > new Date(filters.endDate)) return false;
     

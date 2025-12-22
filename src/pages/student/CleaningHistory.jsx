@@ -30,18 +30,17 @@ const CleaningHistory = () => {
     fetchData();
   }, []);
 
-  const fetchData = async () => {
+const fetchData = async () => {
     try {
       setLoading(true);
-
-      // Fetch Workers
-      const workersData = await workerService.getWorkersWithStats();
+      const workersData = await workerService.getActiveWorkers(); 
+      
       const fetchedWorkers = Array.isArray(workersData.data) ? workersData.data : [];
       setWorkers(fetchedWorkers);
 
       // Fetch History
       const historyResponse = await cleaningService.getStudentHistory();
-      // FIX: Access response.data directly
+      
       const fetchedHistory = Array.isArray(historyResponse.data) ? historyResponse.data : [];
       setHistory(fetchedHistory);
 
@@ -66,13 +65,10 @@ const CleaningHistory = () => {
   };
 
   const filteredHistory = history.filter((item) => {
-    // FIX: Use optional chaining for worker
     if (filters.worker && item.worker?.name !== filters.worker) return false;
     
-    // FIX: Use 'cleaningType' (singular) matching backend array
     if (filters.cleaningType && !item.cleaningType?.includes(filters.cleaningType)) return false;
     
-    // FIX: Use 'createdAt' matching backend
     if (filters.startDate && new Date(item.createdAt) < new Date(filters.startDate)) return false;
     if (filters.endDate && new Date(item.createdAt) > new Date(filters.endDate)) return false;
     
