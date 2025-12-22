@@ -11,7 +11,8 @@ import {
   School,
   Settings,
   Calendar,
-  Package
+  Package,
+  KeyRound
 } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -31,6 +32,7 @@ const AdminSidebar = () => {
     { to: '/admin/workers', icon: ClipboardList, label: 'Workers' },
     { to: '/admin/cleaning-logs', icon: AlertTriangle, label: 'Cleaning Logs' },
     { to: '/admin/issues', icon: AlertTriangle, label: 'Issues' },
+    { to: '/admin/create-room', icon: KeyRound, label: 'Create Room' },
   ];
 
   return (

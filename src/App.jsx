@@ -25,6 +25,7 @@ import {
   WorkerManagement,
   CleaningLogs,
   IssueManagement,
+  CreateRoom,
 } from './pages/admin';
 
 import Lenis from 'lenis'
@@ -88,6 +89,7 @@ function App() {
             <Route path="workers" element={<WorkerManagement />} />
             <Route path="cleaning-logs" element={<CleaningLogs />} />
             <Route path="issues" element={<IssueManagement />} />
+            <Route path="create-room" element={<CreateRoom />} />
           </Route>
 
           {/* Catch all - redirect to home */}
