@@ -41,20 +41,15 @@ const CleaningLogs = () => {
       setLoading(true);
 
       // Fetch Workers
-      const workersData = await workerService.getWorkersWithStats(); // Or getAllWorkers if available
-      // Check response structure for workers. workerService.getWorkersWithStats -> /admin/workers-stats
-      // If that returns ApiRes { data: { activeWorkers: [], ... } } or just workers list?
-      // Let's assume workersData.data or workersData directly if service unwraps it.
-      // Looking at service, it returns response.data.
-      // So if backend sends ApiRes, workersData is { statusCode, data, success }
-      const fetchedWorkers = workersData.data?.activeWorkers || workersData.data || [];
+      const workersData = await workerService.getWorkersWithStats();
+      // Ensure we get the array safely
+      const fetchedWorkers = Array.isArray(workersData.data) ? workersData.data : [];
       setWorkers(fetchedWorkers);
 
       // Fetch Logs
       const logsResponse = await cleaningService.getAllCleaningLogs(filters);
-      // logsResponse is ApiRes { data: [...] } or { data: { logs: [] } }
-      // Ideally backend returns list of logs.
-      const fetchedLogs = logsResponse.data?.logs || logsResponse.data || [];
+      // FIX: Access response.data directly. Backend sends { statusCode, data: [...], ... }
+      const fetchedLogs = Array.isArray(logsResponse.data) ? logsResponse.data : [];
       setLogs(fetchedLogs);
 
     } catch (error) {
@@ -78,10 +73,16 @@ const CleaningLogs = () => {
   };
 
   const filteredLogs = logs.filter((log) => {
-    if (filters.worker && log.worker.name !== filters.worker) return false;
-    if (filters.room && !log.room.number.toLowerCase().includes(filters.room.toLowerCase())) return false;
-    if (filters.startDate && new Date(log.date) < new Date(filters.startDate)) return false;
-    if (filters.endDate && new Date(log.date) > new Date(filters.endDate)) return false;
+    // FIX: Use optional chaining (?.) in case worker was deleted
+    if (filters.worker && log.worker?.name !== filters.worker) return false;
+    
+    // FIX: Use log.room_no instead of log.room.number
+    if (filters.room && !log.room_no.toLowerCase().includes(filters.room.toLowerCase())) return false;
+    
+    // FIX: Use log.createdAt instead of log.date
+    if (filters.startDate && new Date(log.createdAt) < new Date(filters.startDate)) return false;
+    if (filters.endDate && new Date(log.createdAt) > new Date(filters.endDate)) return false;
+    
     return true;
   });
 
@@ -184,26 +185,30 @@ const CleaningLogs = () => {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2 text-slate-900 font-medium">
                       <Calendar className="w-4 h-4 text-slate-400" />
-                      {format(new Date(log.date), 'MMM d, yyyy')}
+                      {/* FIX: Use createdAt from backend */}
+                      {format(new Date(log.createdAt), 'MMM d, yyyy')}
                     </div>
                     <div className="text-sm text-slate-500">
-                      {format(new Date(log.date), 'h:mm a')}
+                      {format(new Date(log.createdAt), 'h:mm a')}
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <span className="px-2.5 py-1 bg-violet-50 text-violet-700 text-sm font-medium rounded-lg border border-violet-100">
-                      {log.room.number}
+                      {/* FIX: Use room_no directly */}
+                      {log.room_no}
                     </span>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2 text-slate-700">
                       <User className="w-4 h-4 text-slate-400" />
-                      {log.worker.name}
+                      {/* FIX: Handle null worker if deleted */}
+                      {log.worker?.name || 'Unknown'}
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex flex-wrap gap-1">
-                      {log.cleaningTypes.map((type) => (
+                      {/* FIX: Use cleaningType (backend name) and check array */}
+                      {log.cleaningType && log.cleaningType.map((type) => (
                         <span
                           key={type}
                           className="px-2 py-0.5 text-xs bg-slate-100 text-slate-600 rounded-full border border-slate-200"

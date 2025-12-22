@@ -88,7 +88,7 @@ const StudentSidebar = () => {
           className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-slate-600 hover:bg-red-50 hover:text-red-600 hover:border-red-100 border border-transparent transition-all duration-300 group"
         >
           <LogOut className="w-5 h-5 text-slate-400 group-hover:text-red-500 transition-colors" />
-          <span className="font-medium">Sign Out</span>
+          <span className="font-medium">Logout</span>
         </button>
       </div>
     </>
@@ -114,7 +114,7 @@ const StudentSidebar = () => {
 
       {/* Sidebar */}
       <aside className={`
-        fixed lg:static inset-y-0 left-0 z-40
+        fixed lg:sticky lg:top-0 inset-y-0 left-0 z-40
         w-80 bg-white border-r border-slate-200 shadow-xl lg:shadow-none
         flex flex-col h-screen
         transform transition-transform duration-300 ease-in-out

@@ -79,7 +79,7 @@ function Header() {
 
                 {isMobileMenuOpen && (
                     <nav className="lg:hidden mt-4 pb-4 space-y-3 bg-white rounded-xl px-4 py-3 shadow-xl border border-gray-100">
-                        {['Home', 'About'].map((item) => (
+                        {['Home'].map((item) => (
                             <a
                                 key={item}
                                 href={item === 'Home' ? '/' : `#${item.toLowerCase()}`}
@@ -89,7 +89,7 @@ function Header() {
                             </a>
                         ))}
                         <Link to="/login" className="block w-full">
-                            <Button className="w-full bg-[#ff9999] hover:bg-[#ff8080] text-white border-0 shadow-md !bg-none" style={{ backgroundImage: 'none' }}>
+                            <Button className="w-full bg-red-600 hover:bg-red-700 text-white border-0 shadow-md !bg-none" style={{ backgroundImage: 'none' }}>
                                 Login to Portal
                             </Button>
                         </Link>

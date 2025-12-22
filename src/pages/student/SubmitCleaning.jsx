@@ -55,13 +55,12 @@ const SubmitCleaning = () => {
       setWorkersLoading(true);
       const response = await workerService.getActiveWorkers();
       
-      // FIX 1: Correctly access the array data
-      const allWorkers = Array.isArray(response.data) ? response.data : [];
+      // FIX: The backend already returns only Active workers for this endpoint.
+      // We just need to access the array correctly.
+      const workerList = Array.isArray(response.data) ? response.data : [];
       
-      // FIX 2: Filter only Active workers (status is "Active" in backend model)
-      const activeWorkers = allWorkers.filter(w => w.status === 'Active');
-      
-      setWorkers(activeWorkers);
+      // Removed the .filter() because the student endpoint doesn't return the 'status' field
+      setWorkers(workerList);
     } catch (error) {
       console.error(error);
       toast.error('Failed to load workers');
@@ -86,9 +85,8 @@ const SubmitCleaning = () => {
 
     setLoading(true);
     try {
-      // FIX 3: Use the cleaning service with correct mapping
       await cleaningService.submitCleaning({
-        workerId: data.workerId, // Mapped to 'worker' in service
+        workerId: data.workerId,
         cleaningTypes: selectedTypes,
         feedback: data.feedback,
         image: image

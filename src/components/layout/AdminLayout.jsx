@@ -26,16 +26,8 @@ const AdminLayout = () => {
 
       {/* Main content */}
       <main className="flex-1 lg:ml-0 relative flex flex-col">
-        {/* Top Header */}
-        <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 px-6 py-3 flex justify-end items-center sticky top-0 z-30">
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-slate-600 hover:bg-red-50 hover:text-red-600 transition-all duration-200 font-medium text-sm border border-slate-200 hover:border-red-200 bg-white"
-          >
-            <LogOut className="w-4 h-4" />
-            Logout
-          </button>
-        </header>
+        {/* Top Header Removed */}
+
         <div className="flex-1 p-6 lg:p-8">
           <Outlet />
         </div>

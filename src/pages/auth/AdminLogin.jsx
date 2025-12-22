@@ -53,10 +53,9 @@ const AdminLogin = () => {
 
       {/* Navigation */}
       <nav className="relative z-10 px-6 py-6 flex justify-between items-center">
-        <Link to="/" className="inline-flex items-center gap-3 text-white hover:text-gray-200 transition-colors">
-          <img src="/logo.png" alt="KLE Logo" className="w-10 h-10 object-contain brightness-0 invert" />
-          <span className="font-serif font-bold text-xl tracking-wide">KLE Tech</span>
-        </Link>
+        <div className="inline-flex items-center gap-3">
+          {/* Logo removed */}
+        </div>
         <Link to="/" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
           Back to Home
         </Link>

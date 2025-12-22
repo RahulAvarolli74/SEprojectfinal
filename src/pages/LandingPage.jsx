@@ -54,7 +54,7 @@ const LandingPage = () => {
             </span>
           </h1>
 
-          <p className="text-xl text-slate-600 mb-10 max-w-2xl leading-relaxed">
+          <p className="text-xl text-slate-900 mb-10 max-w-2xl leading-relaxed">
             Streamline your hostel cleaning operations with our comprehensive
             verification and worker management system designed for KLE Tech.
           </p>
@@ -88,10 +88,10 @@ const LandingPage = () => {
           <Card className="p-10 bg-white shadow-xl border-gray-100 rounded-2xl">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-gray-100">
               {[
-                { value: '500+', label: 'Rooms Managed' },
-                { value: '50+', label: 'Cleaning Staff' },
-                { value: '10K+', label: 'Verifications' },
-                { value: '99%', label: 'Satisfaction' },
+                { value: '000', label: 'Rooms Managed' },
+                { value: '00+', label: 'Cleaning Staff' },
+                { value: '00K+', label: 'Verifications' },
+                { value: '00%', label: 'Satisfaction' },
               ].map((stat, index) => (
                 <div key={index} className="text-center px-4">
                   <div className="text-4xl md:text-5xl font-bold text-[#800000] font-serif mb-2">

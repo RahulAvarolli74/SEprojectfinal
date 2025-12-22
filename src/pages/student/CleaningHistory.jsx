@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
-import { Calendar, User, Filter, Image as ImageIcon, X, Search, ChevronLeft } from 'lucide-react';
+import { Calendar, User, Filter, Image as ImageIcon, Search, ChevronLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import {
   Card,
@@ -34,17 +34,15 @@ const CleaningHistory = () => {
     try {
       setLoading(true);
 
-      // Fetch Workers (for filter)
+      // Fetch Workers
       const workersData = await workerService.getWorkersWithStats();
-      // workersData is ApiRes. data is { activeWorkers: ... } or array?
-      // Based on controller, it returns { activeWorkers: [], totalWorkers: ... }
-      const fetchedWorkers = workersData.data?.activeWorkers || workersData.data || [];
+      const fetchedWorkers = Array.isArray(workersData.data) ? workersData.data : [];
       setWorkers(fetchedWorkers);
 
       // Fetch History
-      const historyResponse = await cleaningService.getStudentHistory(filters);
-      // historyResponse is ApiRes { data: { logs: [] } }
-      const fetchedHistory = historyResponse.data?.logs || historyResponse.data || [];
+      const historyResponse = await cleaningService.getStudentHistory();
+      // FIX: Access response.data directly
+      const fetchedHistory = Array.isArray(historyResponse.data) ? historyResponse.data : [];
       setHistory(fetchedHistory);
 
     } catch (error) {
@@ -68,10 +66,16 @@ const CleaningHistory = () => {
   };
 
   const filteredHistory = history.filter((item) => {
-    if (filters.worker && item.worker.name !== filters.worker) return false;
-    if (filters.cleaningType && !item.cleaningTypes.includes(filters.cleaningType)) return false;
-    if (filters.startDate && new Date(item.date) < new Date(filters.startDate)) return false;
-    if (filters.endDate && new Date(item.date) > new Date(filters.endDate)) return false;
+    // FIX: Use optional chaining for worker
+    if (filters.worker && item.worker?.name !== filters.worker) return false;
+    
+    // FIX: Use 'cleaningType' (singular) matching backend array
+    if (filters.cleaningType && !item.cleaningType?.includes(filters.cleaningType)) return false;
+    
+    // FIX: Use 'createdAt' matching backend
+    if (filters.startDate && new Date(item.createdAt) < new Date(filters.startDate)) return false;
+    if (filters.endDate && new Date(item.createdAt) > new Date(filters.endDate)) return false;
+    
     return true;
   });
 
@@ -188,7 +192,8 @@ const CleaningHistory = () => {
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap gap-2 mb-3">
-                    {item.cleaningTypes.map((type) => (
+                    {/* FIX: Map over item.cleaningType (backend name) */}
+                    {item.cleaningType && item.cleaningType.map((type) => (
                       <span
                         key={type}
                         className="px-3 py-1 text-xs font-medium bg-[#800000]/10 text-[#800000] rounded-full"
@@ -201,11 +206,13 @@ const CleaningHistory = () => {
                   <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500 mb-2">
                     <div className="flex items-center gap-1.5">
                       <Calendar className="w-4 h-4" />
-                      {format(new Date(item.date), 'MMM d, yyyy • h:mm a')}
+                      {/* FIX: Use item.createdAt */}
+                      {format(new Date(item.createdAt), 'MMM d, yyyy • h:mm a')}
                     </div>
                     <div className="flex items-center gap-1.5">
                       <User className="w-4 h-4" />
-                      {item.worker.name}
+                      {/* FIX: Optional chaining for worker name */}
+                      {item.worker?.name || 'Unknown'}
                     </div>
                   </div>
 

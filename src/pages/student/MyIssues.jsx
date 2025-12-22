@@ -34,9 +34,6 @@ const MyIssues = () => {
     try {
       setLoading(true);
       const response = await issueService.getMyIssues();
-      // response is ApiRes. data might be { issues: [] } or just []
-      // Checking issue.controller.js -> getMyIssues returns issues (array)
-      // So response.data IS the array.
       const fetchedIssues = response.data || [];
       setIssues(fetchedIssues);
     } catch (error) {
@@ -53,6 +50,14 @@ const MyIssues = () => {
       </div>
     );
   }
+
+  // FIX: Matching the exact casing from backend Enum ["Open", "In Progress", "Resolved", "Closed"]
+  const stats = [
+    { label: 'Open', count: issues.filter(i => i.status === 'Open').length, color: 'red' },
+    { label: 'In Progress', count: issues.filter(i => i.status === 'In Progress').length, color: 'yellow' },
+    { label: 'Resolved', count: issues.filter(i => i.status === 'Resolved').length, color: 'emerald' },
+    { label: 'Closed', count: issues.filter(i => i.status === 'Closed').length, color: 'slate' },
+  ];
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-500">
@@ -71,12 +76,7 @@ const MyIssues = () => {
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        {[
-          { label: 'Open', count: issues.filter(i => i.status === 'open').length, color: 'red' },
-          { label: 'In Progress', count: issues.filter(i => i.status === 'in-progress').length, color: 'yellow' },
-          { label: 'Resolved', count: issues.filter(i => i.status === 'resolved').length, color: 'emerald' },
-          { label: 'Closed', count: issues.filter(i => i.status === 'closed').length, color: 'slate' },
-        ].map((stat) => (
+        {stats.map((stat) => (
           <Card key={stat.label} className="p-4 text-center border-slate-200 bg-white">
             <p className={`text-2xl font-bold text-${stat.color}-500`}>{stat.count}</p>
             <p className="text-xs text-slate-500">{stat.label}</p>
@@ -128,14 +128,14 @@ const MyIssues = () => {
                 </p>
 
                 {/* Admin Comment */}
-                {issue.adminComment && (
+                {issue.adminResponse && (
                   <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
                     <div className="flex items-center gap-2 mb-2">
                       <MessageCircle className="w-4 h-4 text-[#800000]" />
                       <span className="text-sm font-medium text-[#800000] font-serif">Admin Response</span>
                     </div>
                     <p className="text-sm text-slate-600">
-                      {issue.adminComment}
+                      {issue.adminResponse}
                     </p>
                   </div>
                 )}

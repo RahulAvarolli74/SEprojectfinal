@@ -11,7 +11,7 @@ const StudentLayout = () => {
       <StudentSidebar />
 
       {/* Main content */}
-      <main className="flex-1 relative flex flex-col h-screen overflow-y-auto w-full">
+      <main className="flex-1 relative flex flex-col w-full">
         <div className="flex-1 p-6 lg:p-8">
           <Outlet />
         </div>

@@ -33,11 +33,12 @@ const issueTypeLabels = {
   'other': 'Other',
 };
 
+// Use Title Case values to fix future data consistency
 const statusOptions = [
-  { value: 'open', label: 'Open' },
-  { value: 'in-progress', label: 'In Progress' },
-  { value: 'resolved', label: 'Resolved' },
-  { value: 'closed', label: 'Closed' },
+  { value: 'Open', label: 'Open' },
+  { value: 'In Progress', label: 'In Progress' },
+  { value: 'Resolved', label: 'Resolved' },
+  { value: 'Closed', label: 'Closed' },
 ];
 
 const IssueManagement = () => {
@@ -64,7 +65,6 @@ const IssueManagement = () => {
     try {
       setLoading(true);
       const response = await issueService.getAllIssues(filters);
-      // Ensure we access the array correctly from the response
       const fetchedIssues = response.data || [];
       setIssues(fetchedIssues);
     } catch (error) {
@@ -90,8 +90,8 @@ const IssueManagement = () => {
 
   const openIssueModal = (issue) => {
     setSelectedIssue(issue);
-    setNewStatus(issue.status);
-    setComment(issue.adminResponse || ''); // Changed from adminComment to adminResponse to match backend
+    setNewStatus(issue.status); // Pre-fill with current status
+    setComment(issue.adminResponse || ''); 
     setIsModalOpen(true);
   };
 
@@ -107,13 +107,13 @@ const IssueManagement = () => {
 
     setSubmitting(true);
     try {
+      // Pass the selected Title Case status to backend
       await issueService.resolveIssue(selectedIssue._id, newStatus, comment);
 
-      // Update local state to reflect change
       setIssues((prev) =>
         prev.map((issue) =>
           issue._id === selectedIssue._id
-            ? { ...issue, status: newStatus, adminResponse: comment } // Changed to adminResponse
+            ? { ...issue, status: newStatus, adminResponse: comment }
             : issue
         )
       );
@@ -128,19 +128,21 @@ const IssueManagement = () => {
   };
 
   const filteredIssues = issues.filter((issue) => {
-    if (filters.status && issue.status !== filters.status) return false;
-    // FIX: Changed issue.room.number to issue.room_no
+    // FIX: Case-insensitive status comparison
+    if (filters.status && issue.status?.toLowerCase() !== filters.status.toLowerCase()) return false;
+    
     if (filters.room && !issue.room_no.toLowerCase().includes(filters.room.toLowerCase())) return false;
     if (filters.startDate && new Date(issue.createdAt) < new Date(filters.startDate)) return false;
     if (filters.endDate && new Date(issue.createdAt) > new Date(filters.endDate)) return false;
     return true;
   });
 
+  // FIX: Case-insensitive stats counting to catch both "Resolved" and "resolved"
   const stats = [
-    { label: 'Open', count: issues.filter(i => i.status === 'open').length, color: 'text-red-400' },
-    { label: 'In Progress', count: issues.filter(i => i.status === 'in-progress').length, color: 'text-yellow-400' },
-    { label: 'Resolved', count: issues.filter(i => i.status === 'resolved').length, color: 'text-emerald-400' },
-    { label: 'Closed', count: issues.filter(i => i.status === 'closed').length, color: 'text-slate-400' },
+    { label: 'Open', count: issues.filter(i => i.status?.toLowerCase() === 'open').length, color: 'text-red-400' },
+    { label: 'In Progress', count: issues.filter(i => i.status?.toLowerCase() === 'in progress').length, color: 'text-yellow-400' },
+    { label: 'Resolved', count: issues.filter(i => i.status?.toLowerCase() === 'resolved').length, color: 'text-emerald-400' },
+    { label: 'Closed', count: issues.filter(i => i.status?.toLowerCase() === 'closed').length, color: 'text-slate-400' },
   ];
 
   if (loading) {
@@ -248,7 +250,6 @@ const IssueManagement = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2 mb-2">
                     <span className="px-2.5 py-1 bg-violet-50 text-violet-700 text-sm font-medium rounded-lg border border-violet-100">
-                      {/* FIX: Changed from issue.room.number to issue.room_no */}
                       Room {issue.room_no}
                     </span>
                     <span className="px-2.5 py-1 bg-slate-100 text-slate-600 text-sm rounded-lg border border-slate-200">
@@ -322,7 +323,6 @@ const IssueManagement = () => {
             {/* Issue Info */}
             <div className="flex flex-wrap gap-2">
               <span className="px-2.5 py-1 bg-violet-50 text-violet-700 text-sm font-medium rounded-lg border border-violet-100">
-                {/* FIX: Changed from selectedIssue.room.number to selectedIssue.room_no */}
                 Room {selectedIssue.room_no}
               </span>
               <span className="px-2.5 py-1 bg-slate-100 text-slate-600 text-sm rounded-lg border border-slate-200">
