@@ -3,8 +3,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import StudentSidebar from './StudentSidebar';
 
 const StudentLayout = () => {
-  const { logout } = useAuth(); // Assuming logout is needed or handle in Sidebar? 
-  // StudentSidebar handles logout internally so we might not need it here, but let's keep consistency.
+  const { logout } = useAuth(); 
 
   return (
     <div className="min-h-screen bg-slate-50 flex text-slate-900">

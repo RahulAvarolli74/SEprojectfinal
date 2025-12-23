@@ -88,10 +88,10 @@ const LandingPage = () => {
           <Card className="p-10 bg-white shadow-xl border-gray-100 rounded-2xl">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-gray-100">
               {[
-                { value: '000', label: 'Rooms Managed' },
-                { value: '00+', label: 'Cleaning Staff' },
-                { value: '00K+', label: 'Verifications' },
-                { value: '00%', label: 'Satisfaction' },
+                { value: '100', label: 'Rooms Managed' },
+                { value: '10+', label: 'Cleaning Staff' },
+                { value: '10+', label: 'Verifications' },
+                { value: '80%', label: 'Satisfaction' },
               ].map((stat, index) => (
                 <div key={index} className="text-center px-4">
                   <div className="text-4xl md:text-5xl font-bold text-[#800000] font-serif mb-2">

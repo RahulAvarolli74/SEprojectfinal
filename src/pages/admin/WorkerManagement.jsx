@@ -119,12 +119,7 @@ const WorkerManagement = () => {
   const toggleWorkerStatus = async (worker) => {
     try {
       await workerService.toggleWorkerStatus(worker._id);
-
-      // We toggle the local status optimistically or based on response
-      // Backend uses "Active"/"Inactive", frontend might use boolean or string.
-      // Based on model, status is String "Active"/"Inactive".
-      // Frontend UI seems to expect boolean isActive in some places or check status string.
-      // Let's update the string status.
+      
       setWorkers((prev) =>
         prev.map((w) =>
           w._id === worker._id ? { ...w, status: w.status === 'Active' ? 'Inactive' : 'Active' } : w

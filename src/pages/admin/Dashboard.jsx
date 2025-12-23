@@ -81,11 +81,6 @@ const AdminDashboard = () => {
     { title: 'Open Issues', value: dashboardData.stats.pendingIssues.toString(), change: 'Action Required', icon: AlertTriangle, color: 'bg-amber-500', iconColor: 'text-amber-500' },
   ];
 
-  // Transform backend data to Recharts format if needed
-  // Backend workerPerformance: [{ name: "Raju", count: 10 }] -> matches
-  // Backend taskDistribution: [{ name: "Sweeping", value: 5 }] -> matches
-  // Backend weeklyTrend: [{ _id: "2023-10-01", count: 5 }] -> needs mapping to "day"
-
   const weeklyTrendData = dashboardData.charts.weeklyTrend.map(item => ({
     day: new Date(item._id).toLocaleDateString('en-US', { weekday: 'short' }),
     value: item.count
@@ -150,10 +145,6 @@ const AdminDashboard = () => {
           <h3 className="font-bold text-slate-900 mb-6 font-serif">Cleanings per Worker</h3>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              {/* Note: Backend returns { name: "Name", count: 10 } -> dataKey should be "count" not "value" unless mapped. 
-                  Let's map it or change prop. Backend aggregate returns 'count'. 
-                  Wait, let's map it in render or change dataKey. 
-                  Let's change dataKey to "count" for robustness. */}
               <BarChart data={dashboardData.charts.workerPerformance} layout="vertical" margin={{ left: 40 }}>
                 <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
                 <XAxis type="number" />
