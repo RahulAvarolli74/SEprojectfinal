@@ -54,12 +54,7 @@ const SubmitCleaning = () => {
     try {
       setWorkersLoading(true);
       const response = await workerService.getActiveWorkers();
-      
-      // FIX: The backend already returns only Active workers for this endpoint.
-      // We just need to access the array correctly.
       const workerList = Array.isArray(response.data) ? response.data : [];
-      
-      // Removed the .filter() because the student endpoint doesn't return the 'status' field
       setWorkers(workerList);
     } catch (error) {
       console.error(error);

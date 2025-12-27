@@ -39,16 +39,11 @@ const CleaningLogs = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-
-      // Fetch Workers
       const workersData = await workerService.getWorkersWithStats();
-      // Ensure we get the array safely
       const fetchedWorkers = Array.isArray(workersData.data) ? workersData.data : [];
       setWorkers(fetchedWorkers);
 
-      // Fetch Logs
       const logsResponse = await cleaningService.getAllCleaningLogs(filters);
-      // FIX: Access response.data directly. Backend sends { statusCode, data: [...], ... }
       const fetchedLogs = Array.isArray(logsResponse.data) ? logsResponse.data : [];
       setLogs(fetchedLogs);
 
@@ -72,14 +67,11 @@ const CleaningLogs = () => {
     });
   };
 
-const filteredLogs = logs.filter((log) => {
+  const filteredLogs = logs.filter((log) => {
     if (filters.worker && log.worker?.name !== filters.worker) return false;
-    
     if (filters.room && !log.room_no?.toLowerCase().includes(filters.room.toLowerCase())) return false;
-    
     if (filters.startDate && new Date(log.createdAt) < new Date(filters.startDate)) return false;
     if (filters.endDate && new Date(log.createdAt) > new Date(filters.endDate)) return false;
-    
     return true;
   });
 
@@ -182,7 +174,6 @@ const filteredLogs = logs.filter((log) => {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2 text-slate-900 font-medium">
                       <Calendar className="w-4 h-4 text-slate-400" />
-                      {/* FIX: Use createdAt from backend */}
                       {format(new Date(log.createdAt), 'MMM d, yyyy')}
                     </div>
                     <div className="text-sm text-slate-500">
@@ -191,20 +182,17 @@ const filteredLogs = logs.filter((log) => {
                   </td>
                   <td className="px-6 py-4">
                     <span className="px-2.5 py-1 bg-violet-50 text-violet-700 text-sm font-medium rounded-lg border border-violet-100">
-                      {/* FIX: Use room_no directly */}
                       {log.room_no}
                     </span>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2 text-slate-700">
                       <User className="w-4 h-4 text-slate-400" />
-                      {/* FIX: Handle null worker if deleted */}
                       {log.worker?.name || 'Unknown'}
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex flex-wrap gap-1">
-                      {/* FIX: Use cleaningType (backend name) and check array */}
                       {log.cleaningType && log.cleaningType.map((type) => (
                         <span
                           key={type}
@@ -224,7 +212,7 @@ const filteredLogs = logs.filter((log) => {
                     {log.image ? (
                       <button
                         onClick={() => setSelectedImage(log.image)}
-                        className="relative w-12 h-12 rounded-lg overflow-hidden group border border-slate-200"
+                        className="relative w-12 h-12 rounded-lg overflow-hidden group border border-slate-200 cursor-pointer"
                       >
                         <img
                           src={log.image}
@@ -271,7 +259,7 @@ const filteredLogs = logs.filter((log) => {
         {selectedImage && (
           <img
             src={selectedImage}
-            alt="Cleaning"
+            alt="Cleaning Proof"
             className="w-full h-auto rounded-xl"
           />
         )}

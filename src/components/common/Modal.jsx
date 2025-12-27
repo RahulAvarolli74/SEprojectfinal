@@ -11,13 +11,17 @@ const Modal = ({
 }) => {
   useEffect(() => {
     if (isOpen) {
+      // Prevent background scrolling
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden'; // Added for extra safety
     } else {
       document.body.style.overflow = 'unset';
+      document.documentElement.style.overflow = 'unset';
     }
     
     return () => {
       document.body.style.overflow = 'unset';
+      document.documentElement.style.overflow = 'unset';
     };
   }, [isOpen]);
 
@@ -31,7 +35,11 @@ const Modal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
+    // FIX: Added data-lenis-prevent to stop Lenis from hijacking scroll events here
+    <div 
+      className="fixed inset-0 z-50 overflow-y-auto"
+      data-lenis-prevent
+    >
       <div className="flex min-h-full items-center justify-center p-4">
         {/* Backdrop */}
         <div 

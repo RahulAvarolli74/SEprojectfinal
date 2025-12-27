@@ -51,7 +51,6 @@ const MyIssues = () => {
     );
   }
 
-  // FIX: Matching the exact casing from backend Enum ["Open", "In Progress", "Resolved", "Closed"]
   const stats = [
     { label: 'Open', count: issues.filter(i => i.status === 'Open').length, color: 'red' },
     { label: 'In Progress', count: issues.filter(i => i.status === 'In Progress').length, color: 'yellow' },
@@ -108,12 +107,12 @@ const MyIssues = () => {
                   {issue.image && (
                     <button
                       onClick={() => setSelectedImage(issue.image)}
-                      className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 group"
+                      className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 group cursor-pointer border border-slate-200"
                     >
                       <img
                         src={issue.image}
-                        alt="Issue"
-                        className="w-full h-full object-cover"
+                        alt="Issue Evidence"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform"
                       />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <ImageIcon className="w-5 h-5 text-white" />
@@ -123,7 +122,7 @@ const MyIssues = () => {
                 </div>
 
                 {/* Description */}
-                <p className="text-slate-700">
+                <p className="text-slate-700 whitespace-pre-wrap">
                   {issue.description}
                 </p>
 
@@ -166,7 +165,7 @@ const MyIssues = () => {
         {selectedImage && (
           <img
             src={selectedImage}
-            alt="Issue"
+            alt="Issue Evidence"
             className="w-full h-auto rounded-xl"
           />
         )}

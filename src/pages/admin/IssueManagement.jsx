@@ -6,10 +6,9 @@ import {
   Calendar,
   Home,
   Filter,
-  Image as ImageIcon,
-  Search,
   MessageCircle,
-  Eye
+  Eye,
+  Image as ImageIcon
 } from 'lucide-react';
 import {
   Card,
@@ -33,7 +32,6 @@ const issueTypeLabels = {
   'other': 'Other',
 };
 
-// Use Title Case values to fix future data consistency
 const statusOptions = [
   { value: 'Open', label: 'Open' },
   { value: 'In Progress', label: 'In Progress' },
@@ -90,7 +88,7 @@ const IssueManagement = () => {
 
   const openIssueModal = (issue) => {
     setSelectedIssue(issue);
-    setNewStatus(issue.status); // Pre-fill with current status
+    setNewStatus(issue.status); 
     setComment(issue.adminResponse || ''); 
     setIsModalOpen(true);
   };
@@ -107,7 +105,6 @@ const IssueManagement = () => {
 
     setSubmitting(true);
     try {
-      // Pass the selected Title Case status to backend
       await issueService.resolveIssue(selectedIssue._id, newStatus, comment);
 
       setIssues((prev) =>
@@ -128,16 +125,13 @@ const IssueManagement = () => {
   };
 
   const filteredIssues = issues.filter((issue) => {
-    // FIX: Case-insensitive status comparison
     if (filters.status && issue.status?.toLowerCase() !== filters.status.toLowerCase()) return false;
-    
     if (filters.room && !issue.room_no.toLowerCase().includes(filters.room.toLowerCase())) return false;
     if (filters.startDate && new Date(issue.createdAt) < new Date(filters.startDate)) return false;
     if (filters.endDate && new Date(issue.createdAt) > new Date(filters.endDate)) return false;
     return true;
   });
 
-  // FIX: Case-insensitive stats counting to catch both "Resolved" and "resolved"
   const stats = [
     { label: 'Open', count: issues.filter(i => i.status?.toLowerCase() === 'open').length, color: 'text-red-400' },
     { label: 'In Progress', count: issues.filter(i => i.status?.toLowerCase() === 'in progress').length, color: 'text-yellow-400' },
@@ -235,13 +229,16 @@ const IssueManagement = () => {
           {filteredIssues.map((issue) => (
             <Card key={issue._id} className="p-6 bg-white border-slate-200 shadow-sm hover:shadow-md transition-shadow" hover>
               <div className="flex flex-col lg:flex-row lg:items-start gap-4">
-                {/* Issue Image */}
+                {/* Issue Image Thumbnail */}
                 {issue.image && (
-                  <div className="w-full lg:w-32 h-24 rounded-xl overflow-hidden flex-shrink-0 border border-slate-100">
+                  <div 
+                    className="w-full lg:w-32 h-24 rounded-xl overflow-hidden flex-shrink-0 border border-slate-100 cursor-pointer"
+                    onClick={() => openIssueModal(issue)}
+                  >
                     <img
                       src={issue.image}
                       alt="Issue"
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover hover:scale-110 transition-transform"
                     />
                   </div>
                 )}
@@ -319,75 +316,83 @@ const IssueManagement = () => {
         size="large"
       >
         {selectedIssue && (
-          <div className="space-y-6">
-            {/* Issue Info */}
-            <div className="flex flex-wrap gap-2">
-              <span className="px-2.5 py-1 bg-violet-50 text-violet-700 text-sm font-medium rounded-lg border border-violet-100">
-                Room {selectedIssue.room_no}
-              </span>
-              <span className="px-2.5 py-1 bg-slate-100 text-slate-600 text-sm rounded-lg border border-slate-200">
-                {issueTypeLabels[selectedIssue.issueType] || selectedIssue.issueType}
-              </span>
-            </div>
-
-            {/* Description */}
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
-                Description
-              </label>
-              <p className="text-slate-600 p-4 bg-slate-50 rounded-xl border border-slate-100">
-                {selectedIssue.description}
-              </p>
-            </div>
-
-            {/* Image */}
-            {selectedIssue.image && (
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Attached Image
-                </label>
-                <img
-                  src={selectedIssue.image}
-                  alt="Issue"
-                  className="w-full max-h-64 object-cover rounded-xl"
-                />
+          // FIX: Added data-lenis-prevent to this container
+          <div 
+            className="max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar"
+            data-lenis-prevent
+          >
+            <div className="space-y-6">
+              {/* Issue Info */}
+              <div className="flex flex-wrap gap-2">
+                <span className="px-2.5 py-1 bg-violet-50 text-violet-700 text-sm font-medium rounded-lg border border-violet-100">
+                  Room {selectedIssue.room_no}
+                </span>
+                <span className="px-2.5 py-1 bg-slate-100 text-slate-600 text-sm rounded-lg border border-slate-200">
+                  {issueTypeLabels[selectedIssue.issueType] || selectedIssue.issueType}
+                </span>
               </div>
-            )}
 
-            {/* Status Update */}
-            <Select
-              label="Status"
-              options={statusOptions}
-              value={newStatus}
-              onChange={(e) => setNewStatus(e.target.value)}
-            />
+              {/* Description */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Description
+                </label>
+                <p className="text-slate-600 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                  {selectedIssue.description}
+                </p>
+              </div>
 
-            {/* Admin Comment */}
-            <Textarea
-              label="Admin Comment"
-              placeholder="Add a comment or response..."
-              rows={4}
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            />
+              {/* Image */}
+              {selectedIssue.image && (
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Attached Image
+                  </label>
+                  <div className="relative rounded-xl overflow-hidden border border-slate-200">
+                    <img
+                      src={selectedIssue.image}
+                      alt="Issue Evidence"
+                      className="w-full h-auto object-contain bg-slate-50"
+                    />
+                  </div>
+                </div>
+              )}
 
-            {/* Actions */}
-            <div className="flex gap-3 pt-4">
-              <Button
-                type="button"
-                variant="secondary"
-                className="flex-1"
-                onClick={closeModal}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleUpdateIssue}
-                loading={submitting}
-                className="flex-1"
-              >
-                Update Issue
-              </Button>
+              {/* Status Update */}
+              <Select
+                label="Status"
+                options={statusOptions}
+                value={newStatus}
+                onChange={(e) => setNewStatus(e.target.value)}
+              />
+
+              {/* Admin Comment */}
+              <Textarea
+                label="Admin Comment"
+                placeholder="Add a comment or response..."
+                rows={4}
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+              />
+
+              {/* Actions - Sticky bottom for better UX */}
+              <div className="flex gap-3 pt-4 sticky bottom-0 bg-white pb-2 border-t border-slate-100 mt-6">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="flex-1"
+                  onClick={closeModal}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleUpdateIssue}
+                  loading={submitting}
+                  className="flex-1"
+                >
+                  Update Issue
+                </Button>
+              </div>
             </div>
           </div>
         )}

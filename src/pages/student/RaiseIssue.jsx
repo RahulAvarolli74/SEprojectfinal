@@ -47,9 +47,12 @@ const RaiseIssue = () => {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      // Backend expects: issueType, description, image (optional)
-      // data object from react-hook-form matches this structure.
-      await issueService.createIssue(data);
+      // FIX: Combine form data with the image state
+      await issueService.createIssue({ 
+        ...data, 
+        image: image 
+      });
+      
       setSubmitted(true);
       toast.success('Issue reported successfully!');
     } catch (error) {
@@ -153,7 +156,7 @@ const RaiseIssue = () => {
           <Button
             type="submit"
             loading={loading}
-            className="w-full bg-[#800000] hover:bg-[#600000] text-black font-bold py-3"
+            className="w-full bg-[#800000] hover:bg-[#600000] text-white font-bold py-3"
             size="large"
             icon={Send}
           >
