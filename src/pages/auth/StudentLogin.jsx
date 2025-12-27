@@ -83,7 +83,7 @@ const StudentLogin = () => {
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-300 uppercase tracking-wide">Room Number</label>
                 <Input
-                  placeholder="e.g., A-101"
+                  placeholder="e.g. 101A"
                   icon={Home}
                   error={errors.roomNumber?.message}
                   {...register('roomNumber')}
