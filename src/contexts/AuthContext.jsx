@@ -36,7 +36,8 @@ export const AuthProvider = ({ children }) => {
       return { success: true };
     } catch (error) {
       console.error("Login failed", error);
-      return { success: false, error: error.message };
+      const errorMessage = error.response?.data?.message || error.message || "Login failed";
+      return { success: false, error: errorMessage };
     }
   };
 
@@ -49,7 +50,8 @@ export const AuthProvider = ({ children }) => {
       return { success: true };
     } catch (error) {
       console.error("Admin Login failed", error);
-      return { success: false, error: error.message };
+      const errorMessage = error.response?.data?.message || error.message || "Login failed";
+      return { success: false, error: errorMessage };
     }
   };
 
